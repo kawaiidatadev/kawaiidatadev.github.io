@@ -171,9 +171,12 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
   var REPLACE = ['se cambio','se reemplazo','se instalo nuevo','se sustituyo','cambio de','reemplazo de'];
   var FIX = ['se ajusto','se limpio','se reviso','se calibro','se lubrico','se apreto'];
   var WHERE = ['','','en linea 2','en linea SMT','turno nocturno','equipo 12','horno de reflujo','area de pruebas','maquina de ola'];
+  var GENERIC = ['pieza','componente','refaccion','parte dañada'];
+  /* Ruido realista: 35% de las notas no nombran la pieza y 60% mencionan un síntoma de otra clase */
   function makeNote(c, repl){
-    var parts=[pick(SYMPTOM[c]), (repl?pick(REPLACE):pick(FIX))+' '+pick(PART[c]), pick(WHERE)];
-    if(R()<0.15){ var other=pick(CLASSES); if(other!==c) parts.push(pick(SYMPTOM[other])); } /* ruido realista */
+    var part = R()<0.35 ? pick(GENERIC) : pick(PART[c]);
+    var parts=[pick(SYMPTOM[c]), (repl?pick(REPLACE):pick(FIX))+' '+part, pick(WHERE)];
+    if(R()<0.6){ var other=pick(CLASSES); if(other!==c){ var x=pick(SYMPTOM[other]); if(R()<0.5) parts.unshift(x); else parts.push(x); } }
     return parts.filter(Boolean).join(', ');
   }
   var DATA=[];
@@ -248,13 +251,13 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
   note.addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))run()});
 
   var HOW = EN ? [
-    'Generate 1,200 synthetic notes from plant-floor templates with a fixed seed (6 components, 15% cross-class noise).',
+    'Generate 1,200 synthetic notes from plant-floor templates with a fixed seed: 6 components, 60% of notes mention a symptom from another class and 35% never name the part.',
     'Normalize text: lowercase, strip accents and punctuation, drop stopwords.',
     'Build features from single words and word pairs (bag of words with bigrams).',
     'Train two multinomial Naive Bayes models with Laplace smoothing: component and replacement yes/no.',
     'Evaluate on a 20% hold-out with macro precision, recall and F1, plus the confusion matrix.'
   ] : [
-    'Genero 1,200 notas sintéticas con plantillas de planta y semilla fija (6 componentes, 15% de ruido entre clases).',
+    'Genero 1,200 notas sintéticas con plantillas de planta y semilla fija: 6 componentes, 60% de las notas mencionan un síntoma de otra clase y 35% no nombran la pieza.',
     'Normalizo el texto: minúsculas, sin acentos ni signos, sin palabras vacías.',
     'Construyo variables con palabras y pares de palabras (bolsa de palabras con bigramas).',
     'Entreno dos Naive Bayes multinomiales con suavizado de Laplace: componente y reemplazo sí/no.',
