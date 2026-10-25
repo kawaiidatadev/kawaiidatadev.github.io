@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luis Manuel Macías Patiño · Data Scientist for Manufacturing</title>
+<meta name="description" content="Data scientist and industrial maintenance engineer in Guadalajara, Mexico. NLP on failure records, Python and SQL automation, SAP migration and web systems for plant and finance.">
+<link rel="canonical" href="https://kawaiidatadev.github.io/en/">
+<link rel="alternate" hreflang="es" href="https://kawaiidatadev.github.io/">
+<link rel="alternate" hreflang="en" href="https://kawaiidatadev.github.io/en/">
+<link rel="alternate" hreflang="x-default" href="https://kawaiidatadev.github.io/">
+<meta name="theme-color" content="#0D141B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D141B'/%3E%3Cpath d='M6 38 C16 30 22 30 32 36 S48 42 58 30' stroke='%23F0B347' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta property="og:type" content="profile">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_MX">
+<meta property="og:site_name" content="Luis Manuel Macías Patiño">
+<meta property="og:title" content="Luis Manuel Macías Patiño · Data Scientist for Manufacturing">
+<meta property="og:description" content="Data scientist and industrial maintenance engineer in Guadalajara, Mexico. NLP on failure records, Python and SQL automation, SAP migration and web systems for plant and finance.">
+<meta property="og:url" content="https://kawaiidatadev.github.io/en/">
+<meta property="og:image" content="https://kawaiidatadev.github.io/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Luis Manuel Macías Patiño, científico de datos para manufactura y mantenimiento, Guadalajara, México">
+<meta property="profile:first_name" content="Luis Manuel">
+<meta property="profile:last_name" content="Macías Patiño">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Luis Manuel Macías Patiño · Data Scientist for Manufacturing">
+<meta name="twitter:description" content="Data scientist and industrial maintenance engineer in Guadalajara, Mexico. NLP on failure records, Python and SQL automation, SAP migration and web systems for plant and finance.">
+<meta name="twitter:image" content="https://kawaiidatadev.github.io/og.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfilePage", "url": "https://kawaiidatadev.github.io/en/", "inLanguage": "en", "dateModified": "2026-10-24", "mainEntity": {"@type": "Person", "name": "Luis Manuel Macías Patiño", "jobTitle": "Data Scientist", "url": "https://kawaiidatadev.github.io/", "image": "https://kawaiidatadev.github.io/og.jpg", "address": {"@type": "PostalAddress", "addressLocality": "Guadalajara", "addressRegion": "Jalisco", "addressCountry": "MX"}, "alumniOf": [{"@type": "CollegeOrUniversity", "name": "IEXE Universidad"}, {"@type": "CollegeOrUniversity", "name": "Universidad Tecnológica de Jalisco"}], "knowsAbout": ["Ciencia de datos", "Machine Learning", "Procesamiento de lenguaje natural", "Python", "SQL", "Power BI", "SAP", "Mantenimiento industrial", "Automatización de procesos"], "sameAs": ["https://www.linkedin.com/in/luis-manuel-macias-pati%C3%B1o-b365832b8/", "https://github.com/kawaiidatadev"]}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: hoja técnica de instrumento. Columna central de 1120px, paneles de lectura con escala, proyectos como fichas de ingeniería. */
+:root{
+  --paper:#EDF1F4; --panel:#FFFFFF; --ink:#13202B; --muted:#56646F; --line:#C8D1D9;
+  --amber:#C98A12; --amber-ink:#875800; --data:#1D6C88; --grid:rgba(29,108,136,.07);
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:1;text-wrap:balance;margin:0;letter-spacing:.01em}
+h2{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;text-transform:uppercase}
+h3{font-size:1.7rem;font-weight:600;text-transform:uppercase}
+p{margin:0}
+.eyebrow{font:500 .75rem/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--amber-ink)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{font:800 1.35rem/1 var(--display);text-transform:uppercase;text-decoration:none;letter-spacing:.03em;white-space:nowrap}
+.brand span{color:var(--amber-ink)}
+.nav-right{display:flex;align-items:center;gap:16px;min-width:0}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:0;font:500 .78rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.nav ul a{display:inline-block;padding:9px 8px;text-decoration:none;color:var(--muted);border-radius:3px}
+.nav ul a:hover,.nav ul a.active{color:var(--ink)}
+.nav ul a.active{box-shadow:inset 0 -2px 0 var(--amber)}
+.motion-btn{display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--muted);font:500 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
+.motion-btn:hover{color:var(--ink);border-color:var(--muted)}
+.motion-btn .ico{width:10px;height:10px;display:inline-block;background:linear-gradient(90deg,currentColor 35%,transparent 35% 65%,currentColor 65%)}
+.motion-btn[aria-pressed="true"] .ico{background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%)}
+.lang-btn{display:inline-flex;align-items:center;justify-content:center;min-height:34px;min-width:36px;padding:6px 8px;border:1px solid var(--line);border-radius:3px;font:600 .72rem/1 var(--mono);letter-spacing:.06em;color:var(--muted);text-decoration:none;background:var(--panel)}
+.lang-btn:hover{color:var(--ink);border-color:var(--muted)}
+.demo-link{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;padding:10px 14px;border-radius:3px;background:var(--ink);color:var(--paper);font-weight:600;text-decoration:none}
+.demo-link:hover{background:var(--data)}
+.skip{position:absolute;left:12px;top:-60px;z-index:20;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:3px;text-decoration:none}
+.skip:focus{top:calc(8px + env(safe-area-inset-top,0px))}
+section[id],header[id]{scroll-margin-top:64px}
+@media (max-width:900px){.motion-btn .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.motion-btn{min-width:36px;justify-content:center}}
+@media (max-width:720px){.nav .hide-sm{display:none}.nav ul a{padding:9px 6px;font-size:.7rem}.nav-right{gap:6px}}
+@media (max-width:500px){.nav .hide-xs{display:none}}
+@media (max-width:380px){.brand{font-size:1.1rem}.nav ul a{padding:9px 4px;letter-spacing:.02em}}
+
+/* hero */
+.hero .wrap{display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:center;padding-block:72px 56px}
+.hero h1{font-size:clamp(2.8rem,8vw,6rem);font-weight:800;text-transform:uppercase;margin:14px 0 12px}
+.role{font:600 clamp(1.35rem,3vw,1.9rem)/1.1 var(--display);text-transform:uppercase;color:var(--amber-ink);letter-spacing:.02em;margin-bottom:12px;text-wrap:balance}
+.where{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 .78rem/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px}
+.where span+span::before{content:"·";margin-right:14px;color:var(--line)}
+.readout dd .sep{color:var(--muted);font-weight:600}
+.readout dd.pair{font-size:clamp(1.5rem,3.4vw,1.85rem)}
+footer a{color:var(--ink)}
+.lead{font-size:1.15rem;max-width:58ch}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:22px 0 28px;font:500 .82rem/1.3 var(--mono)}
+.path span{border:1px solid var(--line);background:var(--panel);padding:6px 10px;border-radius:3px}
+.path i{color:var(--amber-ink);font-style:normal}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:3px;font:600 .95rem/1 var(--body);text-decoration:none;border:1px solid var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--data);border-color:var(--data)}
+.btn.ghost:hover{border-color:var(--amber);color:var(--amber-ink)}
+.status{display:inline-flex;align-items:center;gap:8px;font:500 .78rem/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.led{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px color-mix(in srgb,var(--amber) 25%,transparent)}
+@media (prefers-reduced-motion:no-preference){.led{animation:blink 2.4s ease-in-out infinite}}
+@keyframes blink{50%{opacity:.35}}
+
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.readout header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font:500 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.readout dl{margin:0;display:grid;grid-template-columns:1fr 1fr}
+.readout div{padding:18px 16px;border-bottom:1px solid var(--line)}
+.readout div:nth-child(odd){border-right:1px solid var(--line)}
+.readout div:nth-last-child(-n+2){border-bottom:0}
+.readout dt{font:500 .72rem/1.35 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+.readout dd{margin:0;font:800 2.4rem/1 var(--display);font-variant-numeric:tabular-nums}
+.readout dd small{font-size:1.1rem;color:var(--amber-ink)}
+.scope-wrap{border-top:1px solid var(--line)}
+.trace{display:block;width:100%;height:84px}
+.scope-legend{display:flex;gap:16px;padding:8px 16px 12px;font:500 .68rem/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.scope-legend span{display:inline-flex;align-items:center;gap:6px}
+.scope-legend i{width:14px;height:2px;background:var(--amber)}
+.scope-legend i.raw{background:var(--muted);opacity:.6}
+@media (max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:36px;padding-block:48px 40px}}
+
+/* sections */
+section.block{padding-block:72px;border-top:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:1fr 1.2fr;gap:32px;align-items:end;margin-bottom:40px}
+.sec-head p{max-width:60ch;color:var(--muted)}
+@media (max-width:760px){.sec-head{grid-template-columns:1fr;gap:14px}}
+
+/* feature cards */
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:28px;overflow:hidden}
+.feature > *{min-width:0}
+.f-text{padding:32px;display:flex;flex-direction:column;gap:16px}
+.f-viz{padding:32px;border-left:1px solid var(--line);background:color-mix(in srgb,var(--paper) 55%,var(--panel));display:flex;flex-direction:column;justify-content:center;gap:18px}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:500 .72rem/1 var(--mono);padding:5px 8px;border-radius:2px;border:1px solid var(--line);color:var(--muted)}
+.f-id{display:flex;justify-content:space-between;gap:12px;font:500 .72rem/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.f-id b{color:var(--amber-ink);font-weight:500}
+.f-text ul{margin:0;padding-left:18px;display:grid;gap:6px}
+@media (max-width:880px){.feature{grid-template-columns:1fr}.f-viz{border-left:0;border-top:1px solid var(--line)}.f-text,.f-viz{padding:24px}}
+
+/* funnel */
+.funnel{display:grid;gap:14px}
+.funnel .row{display:grid;gap:6px}
+.funnel .lbl{display:flex;justify-content:space-between;gap:12px;font-size:.88rem}
+.funnel .lbl b{font:600 1rem/1 var(--mono);font-variant-numeric:tabular-nums}
+.bar{height:12px;background:var(--line);border-radius:1px;position:relative;overflow:hidden}
+.bar span{position:absolute;inset:0 auto 0 0;background:var(--data);min-width:2px}
+.bar.amber span{background:var(--amber)}
+.scale{display:flex;justify-content:space-between;font:400 .68rem/1 var(--mono);color:var(--muted)}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric{border:1px solid var(--line);background:var(--panel);padding:12px;border-radius:3px}
+.metric b{display:block;font:800 1.9rem/1 var(--display);font-variant-numeric:tabular-nums}
+.metric span{font:500 .7rem/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.metric .bar{height:5px;margin-top:10px}
+
+/* architecture */
+.arch{display:grid;gap:10px;font-size:.85rem}
+.arch .layer{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:stretch}
+.arch .k{font:500 .68rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center}
+.arch .boxes{display:flex;flex-wrap:wrap;gap:6px}
+.arch .box{border:1px solid var(--line);background:var(--panel);padding:8px 10px;border-radius:3px;font-family:var(--mono);font-size:.78rem}
+.arch .box.hl{border-color:var(--amber);color:var(--amber-ink)}
+.arch .shell{border:1px dashed var(--data);border-radius:4px;padding:12px;display:grid;gap:10px;position:relative}
+.arch .shell::before{content:"docker compose";position:absolute;top:-9px;right:10px;background:color-mix(in srgb,var(--paper) 55%,var(--panel));padding:0 6px;font:500 .66rem/1.2 var(--mono);color:var(--data)}
+@media (max-width:480px){.arch .layer{grid-template-columns:1fr}}
+
+/* pipeline */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:s}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:.9rem;counter-increment:s}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s,decimal-leading-zero);font:500 .78rem/1.6 var(--mono);color:var(--amber-ink)}
+.big-stat{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.big-stat b{font:800 3.4rem/1 var(--display);font-variant-numeric:tabular-nums}
+.big-stat span{color:var(--muted);font-size:.9rem}
+
+/* bom tree */
+.tree{width:100%;height:auto;display:block}
+.tree text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.tree .node{fill:var(--panel);stroke:var(--data)}
+.tree .node.top{stroke:var(--amber)}
+.tree .edge{stroke:var(--line);fill:none}
+.tree .lv{fill:var(--ink);font-weight:500}
+
+/* small grid */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card h3{font-size:1.35rem}
+.card .fig{font:800 2rem/1 var(--display);color:var(--amber-ink);font-variant-numeric:tabular-nums}
+.card p{font-size:.92rem;color:var(--muted)}
+@media (max-width:900px){.grid3{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.grid3{grid-template-columns:1fr}}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.compare div{border:1px solid var(--line);border-radius:3px;padding:8px 10px;font-size:.8rem}
+.compare div b{display:block;font:600 .95rem/1.2 var(--mono)}
+.compare div.after{border-color:var(--amber)}
+
+/* repos */
+.repos{margin-top:40px;display:grid;gap:14px}
+.repo-list{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:960px){.repo-list{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.repo-list{grid-template-columns:1fr}}
+.repo-head{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;font-size:.88rem}
+.repo-list a,.repo-list .repo{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:4px;background:var(--panel);text-decoration:none;min-width:0}
+.repo-list a:hover{border-color:var(--data)}
+.repo-list .priv{border-style:dashed}
+.repo-list .priv b{color:var(--ink)}
+.repo-list b{font:500 .9rem/1.2 var(--mono);color:var(--data);overflow-wrap:anywhere}
+.repo-list span{font-size:.85rem;color:var(--muted);flex:1}
+.repo-list i{font:500 .7rem/1 var(--mono);font-style:normal;color:var(--muted)}
+
+/* now */
+.now{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media (max-width:700px){.now{grid-template-columns:1fr}}
+.now .card{flex-direction:row;gap:16px;align-items:flex-start}
+.now .card .eyebrow{min-width:72px}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;position:relative}
+.timeline::before{content:"";position:absolute;left:118px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.timeline li{display:grid;grid-template-columns:104px 1fr;gap:28px;padding-bottom:28px;position:relative}
+.timeline li::after{content:"";position:absolute;left:113px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--data)}
+.timeline li.edu::after{border-color:var(--amber)}
+.timeline .yr{font:500 .85rem/1.5 var(--mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.timeline h3{font-size:1.4rem;margin-bottom:4px}
+.timeline .org{font:500 .8rem/1.4 var(--mono);color:var(--amber-ink);margin-bottom:6px}
+.timeline p{color:var(--muted);font-size:.93rem;max-width:62ch}
+.legend{display:flex;gap:18px;font:500 .72rem/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:28px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;border:2px solid var(--data)}
+.legend i.e{border-color:var(--amber)}
+@media (max-width:560px){
+  .timeline::before{left:5px}
+  .timeline li{grid-template-columns:1fr;gap:4px;padding-left:28px}
+  .timeline li::after{left:0}
+  .timeline .yr{text-align:left}
+}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:960px){.skills{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.skills{grid-template-columns:1fr}}
+.skills .card ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.skills .card li{font:500 .78rem/1 var(--mono);border:1px solid var(--line);padding:6px 8px;border-radius:2px}
+
+.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;margin-top:28px}
+.certs div{padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0;font-size:.9rem}
+.certs div small{display:block;font:500 .68rem/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+
+/* contact */
+.contact{background:var(--ink);color:var(--paper);border-radius:4px;padding:48px;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+.contact h2{color:var(--paper)}
+.contact p{color:color-mix(in srgb,var(--paper) 72%,var(--ink));margin-top:14px;max-width:48ch}
+.ch{display:grid;gap:12px}
+.ch .line{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid color-mix(in srgb,var(--paper) 25%,var(--ink));border-radius:3px;padding:14px 16px;flex-wrap:wrap}
+.ch .line small{display:block;font:500 .7rem/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:6px}
+.ch .line b{font:500 1.05rem/1.2 var(--mono);user-select:all}
+.ch .line a,.ch .line button{font:600 .85rem/1 var(--body);color:var(--ink);background:var(--paper);border:0;border-radius:3px;padding:10px 14px;text-decoration:none;cursor:pointer}
+.ch .line a:hover,.ch .line button:hover{background:var(--amber);color:#13202B}
+@media (max-width:820px){.contact{grid-template-columns:1fr;padding:28px}}
+/* method */
+.method{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:m}
+.method li{counter-increment:m;display:grid;gap:8px;align-content:start;padding:16px 12px;border-top:2px solid var(--line);border-radius:0 0 3px 3px;min-width:0}
+.method li::before{content:counter(m,decimal-leading-zero);font:500 .78rem/1 var(--mono);color:var(--amber-ink)}
+.method b{font:600 1.25rem/1.05 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.method span{font-size:.9rem;color:var(--muted)}
+@media (max-width:900px){.method{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.method{grid-template-columns:1fr}}
+
+/* motion: loops quietly, every loop starts from the finished state */
+.steps.flow li{padding-inline:8px;border-radius:3px}
+.hourbar{height:6px;background:var(--line);border-radius:1px;overflow:hidden;margin-top:4px}
+.hourbar span{display:block;height:100%;width:100%;background:var(--amber)}
+.bar span{overflow:hidden}
+.tree .flowdots circle{fill:var(--amber)}
+.arch .shell{border:0;background:
+  linear-gradient(90deg,var(--data) 55%,transparent 0) 0 0/12px 1px repeat-x,
+  linear-gradient(90deg,var(--data) 55%,transparent 0) 0 100%/12px 1px repeat-x,
+  linear-gradient(0deg,var(--data) 55%,transparent 0) 0 0/1px 12px repeat-y,
+  linear-gradient(0deg,var(--data) 55%,transparent 0) 100% 0/1px 12px repeat-y}
+@media (prefers-reduced-motion:no-preference){
+  .flow > li{animation:glow calc(var(--n,5) * 1.1s) linear infinite;animation-delay:calc(var(--i,0) * 1.1s)}
+  .hourbar span{animation:hours 7s ease-in-out infinite}
+  .bar span::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--panel) 55%,transparent),transparent);transform:translateX(-100%);animation:shimmer 3.6s ease-in-out infinite}
+  .arch .shell{animation:ants 1.4s linear infinite}
+}
+@media (prefers-reduced-motion:reduce){.tree .flowdots{display:none}}
+.motion-off .flow > li,.motion-off .hourbar span,.motion-off .bar span::after,.motion-off .arch .shell,.motion-off .led{animation:none!important}
+.motion-off .tree .flowdots{display:none}
+@keyframes glow{0%,14%{background:color-mix(in srgb,var(--amber) 14%,transparent);border-top-color:var(--amber)}22%,100%{background:transparent;border-top-color:var(--line)}}
+@keyframes hours{0%{width:100%}8%{width:0}85%,100%{width:100%}}
+@keyframes shimmer{0%,40%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes ants{to{background-position:12px 0,-12px 100%,0 -12px,100% 12px}}
+
+footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#proyectos">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#inicio">L. Macías<span>.</span></a>
+    <div class="nav-right">
+      <ul>
+        <li><a href="#proyectos">Projects</a></li>
+        <li class="hide-xs"><a href="#trayectoria">Career</a></li>
+        <li class="hide-sm"><a href="#metodo">Method</a></li>
+        <li class="hide-sm"><a href="#habilidades">Skills</a></li>
+        <li><a href="#contacto">Contact</a></li>
+      </ul>
+      <a class="lang-btn" href="../" hreflang="es" lang="es" title="Versión en español">ES</a>
+      <button type="button" class="motion-btn" id="motion-btn" aria-pressed="false" title="Pause animations"><span class="ico" aria-hidden="true"></span><span class="lbl">Pause animations</span></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <div>
+      <span class="status"><i class="led"></i>Open to data science roles</span>
+      <h1>Luis Manuel Macías Patiño</h1>
+      <p class="role">Data scientist for manufacturing and maintenance</p>
+      <p class="where"><span>Guadalajara, Mexico</span><span>UTC−6</span><span>Data from the plant floor</span></p>
+      <p class="lead">Data science master's graduate and industrial maintenance engineer. Since 2019 I have been turning the records of an electronics manufacturing plant into models, systems and reports that production, maintenance and finance use every day.</p>
+      <div class="path" aria-label="Education">
+        <span>Electromechanical technician</span><i>→</i>
+        <span>B.Eng. Industrial Maintenance</span><i>→</i>
+        <span>M.Sc. Data Science</span>
+      </div>
+      <div class="cta">
+        <a class="btn primary" href="https://wa.me/523324393525?text=Hi%20Luis%2C%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener">Message me on WhatsApp</a>
+        <a class="btn ghost" href="../cv/CV_Luis_Manuel_Macias_Patino_EN.pdf" target="_blank" rel="noopener">Download CV (PDF)</a>
+      </div>
+    </div>
+
+    <aside class="readout" aria-label="Key results">
+      <header><span>Field readings</span><span class="num">CH 1–4</span></header>
+      <dl>
+        <div><dd class="num">51,525</dd><dt>failure records analyzed with NLP</dt></div>
+        <div><dd class="num pair">86.8<small>%</small> <span class="sep">/</span> 88.2<small>%</small></dd><dt>precision / recall of the failure classifier</dt></div>
+        <div><dd class="num">3,660</dd><dt>bills of materials migrated to SAP automatically</dt></div>
+        <div><dd class="num">40<small>+</small></dd><dt>Python projects built</dt></div>
+      </dl>
+      <div class="scope-wrap">
+        <canvas class="trace" id="scope" aria-hidden="true"></canvas>
+        <div class="scope-legend"><span><i class="raw"></i>Plant signal</span><span><i class="clean"></i>Clean data</span></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main>
+<section class="block" id="proyectos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Selected work</span><h2>Projects</h2></div>
+      <p>Real projects built at Idear Electrónica (BEA), an electronics manufacturer in Jalisco, Mexico. Figures come from each project's internal reports. No confidential information is shown.</p>
+    </div>
+
+    <!-- 1. NLP -->
+    <article class="feature">
+      <div class="f-text">
+        <div class="f-id"><span>Machine Learning · NLP</span><b>RAM analysis</b></div>
+        <h3>Natural-language failure classifier</h3>
+        <p>Technicians log failures as free text, which made it hard to know which part was replaced and how often. I trained a natural-language processing model that reads technical notes, detects when a part was changed, replaced or modified, and extracts what failed and what was replaced.</p>
+        <ul>
+          <li>Hand-labeled 139 records to train the model.</li>
+          <li>The model segmented 2,992 failures by replaced component.</li>
+          <li>It is the basis of the department's RAM (reliability, availability, maintainability) analysis.</li>
+        </ul>
+        <div class="tag-row"><span class="tag">Python</span><span class="tag">NLP</span><span class="tag">Machine Learning</span><span class="tag">Data labeling</span><span class="tag">RAM analysis</span></div>
+        <a class="demo-link" href="../demo/?lang=en">Try an interactive demo <span aria-hidden="true">→</span></a>
+        <small class="muted">The demo uses synthetic data; the real model runs on private company data.</small>
+      </div>
+      <div class="f-viz">
+        <div class="funnel" role="img" aria-label="Of 51,525 records, 2,992 failures segmented and 139 hand-labeled">
+          <div class="row"><div class="lbl"><span>Failure records analyzed</span><b>51,525</b></div><div class="bar"><span style="width:100%"></span></div></div>
+          <div class="row"><div class="lbl"><span>Failures segmented by component</span><b>2,992</b></div><div class="bar"><span style="width:5.81%"></span></div></div>
+          <div class="row"><div class="lbl"><span>Hand-labeled for training</span><b>139</b></div><div class="bar amber"><span style="width:.27%"></span></div></div>
+          <div class="scale"><span>0</span><span>linear scale</span><span>51,525</span></div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Precision</span><b>86.8%</b><div class="bar"><span style="width:86.83%"></span></div></div>
+          <div class="metric"><span>Recall</span><b>88.2%</b><div class="bar"><span style="width:88.23%"></span></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 1b. Movimientos bancarios -->
+    <article class="feature">
+      <div class="f-text">
+        <div class="f-id"><span>Software engineering · Finance</span><b>2026</b></div>
+        <h3>Bank transactions platform</h3>
+        <p>Treasury sent bank statements in Excel and Accounting keyed them in by hand: copy, paste and search for payees in PDFs one by one. This application takes the file, validates it, stores every transaction with its version history and keeps a full audit trail.</p>
+        <ul>
+          <li>Sign-in with company accounts (Active Directory).</li>
+          <li>Database migrations with Alembic and automated tests with pytest.</li>
+          <li>Continuous integration with Jenkins and Docker deployment.</li>
+          <li>Interface tested at six screen widths, from 320 to 1920 px.</li>
+          <li>Next phase: identify payees in invoice PDFs with OCR (PaddleOCR and OpenCV) and add Accounts Payable and Receivable.</li>
+        </ul>
+        <div class="tag-row"><span class="tag">Flask 3.1</span><span class="tag">MySQL 8</span><span class="tag">Alembic</span><span class="tag">LDAP</span><span class="tag">pytest</span><span class="tag">Jenkins</span><span class="tag">PaddleOCR</span></div>
+      </div>
+      <div class="f-viz">
+        <div class="big-stat"><b>208</b><span>commits in the repository (private company code)</span></div>
+        <span class="eyebrow">Path of a bank statement</span>
+        <ol class="steps flow" style="--n:5">
+          <li style="--i:0"><span>Treasury uploads the bank's Excel file</span></li>
+          <li style="--i:1"><span>Structure and data validated per bank</span></li>
+          <li style="--i:2"><span>Local and network-share backup</span></li>
+          <li style="--i:3"><span>Transactions stored with version and history</span></li>
+          <li style="--i:4"><span>Audit of who uploaded or changed what, and when</span></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- 2. Sistema de mantenimiento -->
+    <article class="feature">
+      <div class="f-text">
+        <div class="f-id"><span>Full-stack development</span><b>v2.0 · 2026</b></div>
+        <h3>Maintenance Management System</h3>
+        <p>A complete web application I designed and coded to replace spreadsheets and paper in the maintenance department. It covers the daily work of technicians, supervisors and line leaders.</p>
+        <ul>
+          <li>Work orders, preventive and corrective maintenance.</li>
+          <li>Spare-parts inventory with multi-currency support.</li>
+          <li>Line stops, meeting minutes, roles and per-module permissions.</li>
+          <li>Configurable PDF reports, scheduled alerts and email notifications.</li>
+          <li>RAM module with an AI assistant running on a local server, so no data leaves the company.</li>
+        </ul>
+        <div class="tag-row"><span class="tag">Flask</span><span class="tag">MySQL</span><span class="tag">SQLAlchemy</span><span class="tag">Docker</span><span class="tag">Ollama · Llama 3.2</span><span class="tag">Chart.js</span></div>
+      </div>
+      <div class="f-viz">
+        <div class="big-stat"><b>184</b><span>commits over 51 days of development, April to July 2026</span></div>
+        <span class="eyebrow">Architecture</span>
+        <div class="arch">
+          <div class="layer"><span class="k">Interface</span><div class="boxes"><span class="box">Bootstrap 5</span><span class="box">Chart.js</span><span class="box">Jinja2</span></div></div>
+          <div class="shell">
+            <div class="layer"><span class="k">Application</span><div class="boxes"><span class="box hl">Flask · Blueprints</span><span class="box">Services</span><span class="box">PDF Registry</span></div></div>
+            <div class="layer"><span class="k">Jobs</span><div class="boxes"><span class="box">APScheduler</span><span class="box">Email · Brevo</span><span class="box">QR codes</span></div></div>
+            <div class="layer"><span class="k">Data</span><div class="boxes"><span class="box">MySQL 8</span><span class="box">Exchange rates</span></div></div>
+            <div class="layer"><span class="k">Local AI</span><div class="boxes"><span class="box hl">Ollama · Llama 3.2 3B</span></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. BOM a SAP -->
+    <article class="feature">
+      <div class="f-text">
+        <div class="f-id"><span>ETL · Automation</span><b>ERP migration</b></div>
+        <h3>Bulk BOM extraction into SAP</h3>
+        <p>The SAP Business One rollout required moving every bill of materials out of the legacy system (JetAccess), product by product. I wrote a bot that navigates the system, extracts each list, normalizes it and outputs the format SAP needs. I ran three bulk extractions and delivered the files by product-structure level.</p>
+        <div class="big-stat"><b>3,660</b><span>products processed in 5 to 6 days of continuous run time</span></div>
+        <div class="tag-row"><span class="tag">Python</span><span class="tag">Web scraping</span><span class="tag">SQLite</span><span class="tag">SAP Business One</span></div>
+      </div>
+      <div class="f-viz">
+        <span class="eyebrow">Per-product flow</span>
+        <ol class="steps flow" style="--n:6">
+          <li style="--i:0"><span>Load the list of pending products</span></li>
+          <li style="--i:1"><span>Sign in to JetAccess and open the BOM module</span></li>
+          <li style="--i:2"><span>Query the product and take a screenshot on error</span></li>
+          <li style="--i:3"><span>Extract the HTML and turn the table into data</span></li>
+          <li style="--i:4"><span>Normalize and convert to SAP format</span></li>
+          <li style="--i:5"><span>Save to SQLite and move to the next one</span></li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- 4. Sobrantes -->
+    <article class="feature">
+      <div class="f-text">
+        <div class="f-id"><span>Algorithms · Production data</span><b>Inventory</b></div>
+        <h3>Production leftovers calculation</h3>
+        <p>An algorithm that recursively walks the product structure, from basic component to finished good. It multiplies quantities along every parent-child link, derives real consumption across the chain and computes what was left over at each level.</p>
+        <div class="big-stat"><b>3,093</b><span>products calculated for a full year of production</span></div>
+        <div class="tag-row"><span class="tag">Python</span><span class="tag">Recursion</span><span class="tag">SQL</span><span class="tag">BOM</span></div>
+      </div>
+      <div class="f-viz">
+        <span class="eyebrow">Structure walked · level 900 to 100</span>
+        <svg class="tree" viewBox="0 0 360 210" role="img" aria-label="Product tree: level 100 is the finished good and level 900 the basic components">
+          <path class="edge" d="M180 34 L90 92 M180 34 L270 92 M90 110 L45 166 M90 110 L135 166 M270 110 L225 166 M270 110 L315 166"/>
+          <g class="flowdots" aria-hidden="true">
+            <circle r="3"><animateMotion dur="3.2s" begin="0s" repeatCount="indefinite" path="M45 166 L90 112 L90 92 L180 36"/></circle>
+            <circle r="3"><animateMotion dur="3.2s" begin="-0.8s" repeatCount="indefinite" path="M135 166 L90 112 L90 92 L180 36"/></circle>
+            <circle r="3"><animateMotion dur="3.2s" begin="-1.6s" repeatCount="indefinite" path="M225 166 L270 112 L270 92 L180 36"/></circle>
+            <circle r="3"><animateMotion dur="3.2s" begin="-2.4s" repeatCount="indefinite" path="M315 166 L270 112 L270 92 L180 36"/></circle>
+          </g>
+          <rect class="node top" x="140" y="16" width="80" height="20" rx="2"/>
+          <text class="lv" x="180" y="30" text-anchor="middle">Level 100</text>
+          <rect class="node" x="55" y="92" width="70" height="20" rx="2"/><text x="90" y="106" text-anchor="middle">Subassembly</text>
+          <rect class="node" x="235" y="92" width="70" height="20" rx="2"/><text x="270" y="106" text-anchor="middle">Subassembly</text>
+          <rect class="node" x="15" y="166" width="60" height="20" rx="2"/><text x="45" y="180" text-anchor="middle">Lv 900</text>
+          <rect class="node" x="105" y="166" width="60" height="20" rx="2"/><text x="135" y="180" text-anchor="middle">Lv 900</text>
+          <rect class="node" x="195" y="166" width="60" height="20" rx="2"/><text x="225" y="180" text-anchor="middle">Lv 900</text>
+          <rect class="node" x="285" y="166" width="60" height="20" rx="2"/><text x="315" y="180" text-anchor="middle">Lv 900</text>
+          <text x="180" y="205" text-anchor="middle">real use = Σ quantity × use at every parent level</text>
+        </svg>
+      </div>
+    </article>
+
+    <div class="sec-head" style="margin-top:56px;margin-bottom:24px">
+      <div><span class="eyebrow">Hardware + data</span><h2 style="font-size:clamp(1.8rem,4vw,2.4rem)">Plant engineering</h2></div>
+      <p>Projects where I combined electronics, sensors and software to measure what used to be estimated.</p>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <span class="eyebrow">Sensors · Arduino</span>
+        <h3>Wave-soldering thermal monitor</h3>
+        <p>A fixture that logs temperature at key points of the machine in real time, plus ambient temperature and humidity. Data is stored on SD to tune each board's soldering profile and, later on, to train a model that recommends the optimal settings.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Condition-based maintenance</span>
+        <h3>Compressor hour meter</h3>
+        <p>I designed the hardware and software to measure the actual running hours of the air compressors, so maintenance is scheduled by real use instead of by calendar.</p>
+        <div class="compare"><div><small class="muted">Before</small><b>Every 6 months</b></div><div class="after"><small class="muted">Now</small><b class="num">3,900 h</b></div></div>
+        <div class="hourbar" aria-hidden="true"><span></span></div>
+        <div class="scale"><span>0 h</span><span>actual running hours</span><span>service</span></div>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Quality · ANSI ESD S20.20</span>
+        <h3>ESD control</h3>
+        <p>Software and a logging fixture to check staff anti-static smocks, wrist straps and heel straps, with megohm readings, per-person history and compliance reports.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Process improvement</span>
+        <div class="fig num">−30%</div>
+        <h3>Crimping variation</h3>
+        <p>Cut crimping variation on an automatic crimping machine by 30% through process analysis and tuning.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Management KPIs</span>
+        <div class="fig num">98.87%</div>
+        <h3>Order fulfillment</h3>
+        <p>Every month I analyze and publish quality-system objectives 6 and 7: production, and sales and spare-parts order fulfillment. In April 2026 order closure was 98.87% against a 95% target. I automated the shipping, sales and staffing reports with VBA and Python.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Internal tools</span>
+        <h3>Everyday software</h3>
+        <p>SAP document-number generator, meeting-minutes manager, SAP vs. JetAccess comparers, equipment measurement system and PDF utilities, packaged as desktop programs anyone on the team can use.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">RFID · Electrical metering</span>
+        <h3>Role-based usage-hours fixture</h3>
+        <p>Design of a logger with role-based RFID cards (preventive technician, corrective technician, auditor, manager), event buttons and PZEM-004T sensors for voltage, current and power, from single- to three-phase. Built to compute MTBF and MTTR with no manual data entry.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Reliability</span>
+        <h3>Equipment criticality analysis</h3>
+        <p>I rate each machine by its impact on production, quality, maintenance and safety to choose its maintenance model. I applied it in the main-compressor failure report and, with the same criteria, proposed moving the SMT oven exhaust fans from calendar replacement to condition-based maintenance.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Product testing</span>
+        <h3>Burn-in fixtures</h3>
+        <p>Doubled the capacity of the quick-test fixture and restored the burn-in fixture to its stable version. Proposed the 2026 version: two levels with a double cart, same capacity without a second rack.</p>
+      </div>
+    </div>
+
+    <div class="repos">
+      <div class="repo-head"><span class="eyebrow">GitHub · kawaiidatadev</span><span class="muted">26 repositories. Private ones contain company code and are listed for reference only.</span></div>
+      <div class="repo-list">
+        <div class="repo priv"><b>sistema</b><span>Bank transactions platform with Flask, Active Directory and Jenkins CI.</span><i>Python · 208 commits · Private</i></div>
+        <div class="repo priv"><b>maintenance-system</b><span>Maintenance management system with Docker and local AI.</span><i>Python · Private</i></div>
+        <div class="repo priv"><b>JetAccess-a-SAP</b><span>Product database restructuring for the SAP migration.</span><i>Python · Private</i></div>
+        <a href="https://github.com/kawaiidatadev/sistema-eventos" target="_blank" rel="noopener"><b>sistema-eventos</b><span>HoloEventosGDL: events, participants and attendance with IndexedDB.</span><i>JavaScript</i></a>
+        <a href="https://github.com/kawaiidatadev/MinutasST" target="_blank" rel="noopener"><b>MinutasST</b><span>Production meeting-minutes action tracker with Streamlit on the local network.</span><i>Python</i></a>
+        <a href="https://github.com/kawaiidatadev/Comparador-JET-SAP" target="_blank" rel="noopener"><b>Comparador-JET-SAP</b><span>Compares product structures between JetAccess and SAP and reports differences.</span><i>Python</i></a>
+        <a href="https://github.com/kawaiidatadev/ESP32_Correo_ESD" target="_blank" rel="noopener"><b>ESP32_Correo_ESD</b><span>ESP32 that emails the records stored on a micro SD card every morning.</span><i>Python · IoT</i></a>
+        <a href="https://github.com/kawaiidatadev/practica-de-analisis-descriptivo" target="_blank" rel="noopener"><b>Descriptive analysis</b><span>Exploratory analysis and descriptive statistics practice.</span><i>Python</i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="trayectoria">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">From tools to code</span><h2>Career</h2></div>
+      <p>I started out repairing motors and switchboards. Each stage gave me a different way to understand how a plant works, and data science let me measure it.</p>
+    </div>
+    <div class="legend"><span><i></i>Experience</span><span><i class="e"></i>Education</span></div>
+    <ol class="timeline">
+      <li><span class="yr">2020 – now</span><div><h3>Maintenance Supervisor</h3><div class="org">Idear Electrónica S.A. de C.V. (BEA)</div><p>Joined as process supervisor and now serve as maintenance supervisor. Preventive and corrective maintenance of SMT equipment, compressors and facilities; LOTO and NOM-017-STPS procedures; ESD training; and the department's software and analytics. Rolled out Planner for production tasks, trained staff on the minutes system and supported the electrical fit-out of the new plant. Since 2026 I also automate Treasury, Accounts Payable and Accounting processes.</p></div></li>
+      <li class="edu"><span class="yr">2021 – 2023</span><div><h3>M.Sc. in Data Science</h3><div class="org">IEXE Universidad</div><p>Machine learning, big data, databases, cloud infrastructure, data products, statistics and data ethics.</p></div></li>
+      <li><span class="yr">2019 – 2020</span><div><h3>Documentation Assistant</h3><div class="org">Idear Electrónica S.A. de C.V.</div><p>Production visual aids, product database and work instructions.</p></div></li>
+      <li class="edu"><span class="yr">2019 – 2020</span><div><h3>B.Eng. in Industrial Maintenance</h3><div class="org">Universidad Tecnológica de Jalisco</div><p>Maintenance management, reliability and KPIs.</p></div></li>
+      <li><span class="yr">2018</span><div><h3>Electrical Intern</h3><div class="org">IBM de México</div><p>Maintenance of emergency generators and switchboards. Maintenance plan for the main substation.</p></div></li>
+      <li class="edu"><span class="yr">2015 – 2019</span><div><h3>Electromechanical Technician</h3><div class="org">CONALEP Mexicano-Italiano</div><p>Electrical systems, hydraulics, pneumatics, PLCs and electric machines. Project: an 8-input, 12-output PLC emulator on Arduino Mega.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="metodo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">How I work</span><h2>Method</h2></div>
+      <p>This is how I take a process from paper or Excel to a system. I documented it as the company's internal automation procedure, in ISO 9000 format.</p>
+    </div>
+    <ol class="method flow" style="--n:5">
+      <li style="--i:0"><b>AS-IS discovery</b><span>I interview the people doing the work and map the real flow, the data sources and the rules nobody had written down.</span></li>
+      <li style="--i:1"><b>TO-BE design</b><span>Together with the team I define the future process: what goes away, what gets validated and who approves.</span></li>
+      <li style="--i:2"><b>Specification</b><span>Data model, quality rules, permissions and acceptance criteria.</span></li>
+      <li style="--i:3"><b>Build and validate</b><span>I build, test with real data and validate with users before release.</span></li>
+      <li style="--i:4"><b>Document and close</b><span>Manuals, training and KPIs to measure before and after.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="ahora">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">2025 – 2026</span><h2>What I am working on</h2></div>
+      <p>I took what I learned in maintenance to other areas: finance, accounting and data governance.</p>
+    </div>
+    <div class="now">
+      <div class="card"><span class="eyebrow">Finance</span><div><h3>Reconciliation and month-end close</h3><p>Mapping and automating bank reconciliation, payment requests and month-end close data with Treasury, Accounts Payable and Accounting.</p></div></div>
+      <div class="card"><span class="eyebrow">Data</span><div><h3>Data quality</h3><p>Data-quality (DQ) rule catalog and inventory of the company's data sources.</p></div></div>
+      <div class="card"><span class="eyebrow">ISO</span><div><h3>ISO 27001 and 37001 documentation</h3><p>AS-IS mapping of invoicing, payments and month-end close with standardized process sheets and flows.</p></div></div>
+      <div class="card"><span class="eyebrow">Proposal</span><div><h3>Operational intelligence</h3><p>Proposal to management of 12 digitalization projects with ROI estimates, including a plant digital twin, RFID sensors for MTBF and MTTR, an ESP32 IoT app and SAP-to-Power BI dashboards. The shop-floor search app has an estimated 9x return on investment.</p></div></div>
+      <div class="card"><span class="eyebrow">SAP Business One</span><div><h3>SAP master data</h3><p>Prepared and validated item, inventory and bill-of-materials files for the SAP Business One rollout, together with Purchasing and the implementation partner.</p></div></div>
+      <div class="card"><span class="eyebrow">AI governance</span><div><h3>AI on company data</h3><p>Analysis for management on using language models with company information: why an LLM cannot be the source of truth, and how to separate official data with per-department access profiles.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="habilidades">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Toolbox</span><h2>Skills</h2></div>
+      <p>An unusual mix: I can talk with a technician at the machine and with a data team about the model.</p>
+    </div>
+    <div class="skills">
+      <div class="card"><span class="eyebrow">Data and AI</span><ul><li>Python</li><li>pandas</li><li>NumPy</li><li>scikit-learn</li><li>NLP</li><li>Machine Learning</li><li>Statistics</li><li>ETL</li><li>Local LLMs</li><li>Power BI</li></ul></div>
+      <div class="card"><span class="eyebrow">Engineering</span><ul><li>SQL</li><li>MySQL</li><li>SQLite</li><li>Flask</li><li>Streamlit</li><li>Docker</li><li>Git</li><li>pytest</li><li>Jenkins</li><li>LDAP</li><li>Web scraping</li><li>VBA / Excel</li><li>HTML / CSS</li></ul></div>
+      <div class="card"><span class="eyebrow">Plant</span><ul><li>SAP PM</li><li>Electrical</li><li>Pneumatics</li><li>Hydraulics</li><li>PLC</li><li>Arduino</li><li>ESP32</li><li>SMT equipment</li><li>Substations</li></ul></div>
+      <div class="card"><span class="eyebrow">Standards and method</span><ul><li>ISO 27001</li><li>ISO 37001</li><li>ANSI ESD S20.20</li><li>LOTO OSHA 1910.147</li><li>NOM-017-STPS</li><li>Lean Six Sigma</li><li>Statistical control</li><li>AS-IS</li></ul></div>
+    </div>
+    <div class="certs" aria-label="Certifications">
+      <div><small>Master's</small>Data Science · IEXE</div>
+      <div><small>Artificial intelligence</small>AI · Google and Santander</div>
+      <div><small>Machine learning</small>Model evaluation with confusion matrices</div>
+      <div><small>Development</small>GitHub · Microsoft</div>
+      <div><small>Databases</small>MySQL</div>
+      <div><small>ERP</small>SAP</div>
+      <div><small>Continuous improvement</small>Lean Six Sigma White Belt</div>
+      <div><small>Quality</small>Statistical Process Control</div>
+      <div><small>Web</small>Web development</div>
+      <div><small>Office</small>Advanced Excel</div>
+      <div><small>Business</small>Finance</div>
+      <div><small>Languages</small>Japanese (intermediate)</div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="contacto">
+  <div class="wrap">
+    <div class="contact">
+      <div>
+        <span class="eyebrow" style="color:var(--amber)">Guadalajara, Mexico · Available</span>
+        <h2>Let's talk data</h2>
+        <p>I am looking for a data scientist or data analyst role, especially in manufacturing, operations or predictive maintenance. If your team needs someone who understands the data and also where it comes from, get in touch.</p>
+      </div>
+      <div class="ch">
+        <div class="line">
+          <div><small>WhatsApp</small><b id="wa-num">+52 33 2439 3525</b></div>
+          <div style="display:flex;gap:8px">
+            <button type="button" id="copy-wa">Copy</button>
+            <a href="https://wa.me/523324393525?text=Hi%20Luis%2C%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener">Open chat</a>
+          </div>
+        </div>
+        <div class="line">
+          <div><small>Résumé</small><b>PDF CV · 1 page</b></div>
+          <a href="../cv/CV_Luis_Manuel_Macias_Patino_EN.pdf" target="_blank" rel="noopener">Download</a>
+        </div>
+        <div class="line">
+          <div><small>GitHub</small><b>kawaiidatadev</b></div>
+          <a href="https://github.com/kawaiidatadev" target="_blank" rel="noopener">View code</a>
+        </div>
+        <div class="line">
+          <div><small>LinkedIn</small><b>Luis Manuel Macías Patiño</b></div>
+          <a href="https://www.linkedin.com/in/luis-manuel-macias-pati%C3%B1o-b365832b8/" target="_blank" rel="noopener">View profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Luis Manuel Macías Patiño · Guadalajara, Mexico</span>
+    <span>Updated October 2026 · <a href="#inicio">Back to top ↑</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('copy-wa').addEventListener('click', function(){
+  var btn=this, txt='+523324393525';
+  function done(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy'},1800)}
+  function fallback(){var r=document.createRange();r.selectNodeContents(document.getElementById('wa-num'));var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Selected'}
+  try{navigator.clipboard.writeText(txt).then(done,fallback)}catch(e){fallback()}
+});
+
+/* Osciloscopio: señal ruidosa de planta que se convierte en dato limpio detrás del cursor */
+(function(){
+  var c=document.getElementById('scope'); if(!c||!c.getContext) return;
+  var ctx=c.getContext('2d'), mq=matchMedia('(prefers-reduced-motion: reduce)'), col={}, w=0, h=0;
+  function colors(){var s=getComputedStyle(document.documentElement);col.raw=s.getPropertyValue('--muted').trim();col.clean=s.getPropertyValue('--amber').trim();col.line=s.getPropertyValue('--line').trim()}
+  function size(){var d=window.devicePixelRatio||1;w=c.clientWidth;h=c.clientHeight;c.width=Math.round(w*d);c.height=Math.round(h*d);ctx.setTransform(d,0,0,d,0,0)}
+  function base(x,t){return Math.sin(x*.016+t*.55)*9+Math.sin(x*.041-t*.3)*4}
+  function noise(x,t){return Math.sin(x*.23+t*1.9)*5+Math.sin(x*.61-t*2.7)*3.5+Math.sin(x*1.43+t*3.3)*2.5}
+  function draw(t,cur){
+    var mid=h/2,x,y;
+    ctx.clearRect(0,0,w,h);
+    ctx.globalAlpha=.55;ctx.strokeStyle=col.line;ctx.lineWidth=1;
+    for(x=0;x<w;x+=32){ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,h);ctx.stroke()}
+    ctx.beginPath();ctx.moveTo(0,mid+.5);ctx.lineTo(w,mid+.5);ctx.stroke();
+    ctx.globalAlpha=.5;ctx.strokeStyle=col.raw;ctx.beginPath();
+    for(x=0;x<=w;x+=2){y=mid+base(x,t)+noise(x,t);x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+    ctx.stroke();
+    ctx.globalAlpha=1;ctx.strokeStyle=col.clean;ctx.lineWidth=2.2;ctx.beginPath();
+    for(x=0;x<=Math.min(cur,w);x+=2){y=mid+base(x,t);x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+    ctx.stroke();
+    if(cur<w){ctx.fillStyle=col.clean;ctx.globalAlpha=.85;ctx.fillRect(Math.round(cur),0,1,h);ctx.globalAlpha=1}
+  }
+  function still(){draw(0,w)}
+  var raf=0, t0=0, visible=true, off=false;
+  function loop(now){if(!t0)t0=now;var t=(now-t0)/1000,p=(t%5)/5;draw(t,p*w*1.12);raf=requestAnimationFrame(loop)}
+  function sync(){
+    var run=!off&&visible;
+    if(run&&!raf){t0=0;raf=requestAnimationFrame(loop)}
+    if(!run&&raf){cancelAnimationFrame(raf);raf=0;still()}
+    if(!run&&!raf)still();
+  }
+  colors();size();still();
+  addEventListener('resize',function(){size();if(!raf)still()});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){colors();if(!raf)still()});
+  new MutationObserver(function(){colors();if(!raf)still()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  if('IntersectionObserver' in window){new IntersectionObserver(function(e){visible=e[0].isIntersecting;sync()}).observe(c)}
+  window.__scope={set:function(v){off=v;sync()}};
+})();
+
+/* Control global de animaciones: botón de pausa, preferencia del sistema y memoria del visitante */
+(function(){
+  var btn=document.getElementById('motion-btn'), root=document.documentElement, mq=matchMedia('(prefers-reduced-motion: reduce)');
+  var saved=null; try{saved=localStorage.getItem('motion')}catch(e){}
+  function apply(off){
+    root.classList.toggle('motion-off',off);
+    if(btn){btn.setAttribute('aria-pressed',off?'true':'false');var l=off?'Resume animations':'Pause animations';btn.title=l;btn.querySelector('.lbl').textContent=l}
+    document.querySelectorAll('svg.tree').forEach(function(s){if(s.pauseAnimations){off?s.pauseAnimations():s.unpauseAnimations()}});
+    if(window.__scope)window.__scope.set(off);
+  }
+  apply(saved?saved==='off':mq.matches);
+  if(btn)btn.addEventListener('click',function(){var off=!root.classList.contains('motion-off');apply(off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}});
+  mq.addEventListener('change',function(e){var s=null;try{s=localStorage.getItem('motion')}catch(_){};if(!s)apply(e.matches)});
+})();
+
+/* Resalta en el menú la sección que se está leyendo */
+(function(){
+  if(!('IntersectionObserver' in window))return;
+  var links={};document.querySelectorAll('.nav ul a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var a=links[e.target.id];
+      if(a&&e.isIntersecting){Object.keys(links).forEach(function(k){links[k].classList.remove('active')});a.classList.add('active')}
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  Object.keys(links).forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el)});
+})();
+</script>
+</body>
+</html>
