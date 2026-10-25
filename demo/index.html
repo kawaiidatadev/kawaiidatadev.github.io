@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clasificador de fallas · Demo · Luis Manuel Macías Patiño</title>
+<meta name="description" content="Demo interactiva con datos sintéticos: un clasificador Naive Bayes que lee notas de mantenimiento y predice el componente que falló.">
+<link rel="canonical" href="https://kawaiidatadev.github.io/demo/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D141B'/%3E%3Cpath d='M6 38 C16 30 22 30 32 36 S48 42 58 30' stroke='%23F0B347' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:title" content="Clasificador de fallas · Demo">
+<meta property="og:description" content="Escribe una nota de mantenimiento y el modelo predice qué componente falló. Datos sintéticos.">
+<meta property="og:image" content="https://kawaiidatadev.github.io/og.jpg">
+<meta property="og:url" content="https://kawaiidatadev.github.io/demo/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: misma hoja técnica del portafolio; columna de 1000px con paneles de instrumento. */
+:root{
+  --paper:#EDF1F4; --panel:#FFFFFF; --ink:#13202B; --muted:#56646F; --line:#C8D1D9;
+  --amber:#C98A12; --amber-ink:#875800; --data:#1D6C88; --grid:rgba(29,108,136,.07); --ok:#2E7D4F;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2{font-family:var(--display);text-transform:uppercase;line-height:1;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.4rem,7vw,4.2rem);font-weight:800}
+h2{font-size:1.6rem;font-weight:600}
+p{margin:0}
+.eyebrow{font:500 .74rem/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--amber-ink)}
+.muted{color:var(--muted)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:14px;border-bottom:1px solid var(--line)}
+.top a{font:500 .8rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;text-decoration:none;color:var(--muted);padding:8px 4px}
+.top a:hover{color:var(--ink)}
+.intro{padding-block:40px 28px;display:grid;gap:14px}
+.intro p{max-width:66ch}
+.badge{display:inline-flex;align-self:start;gap:8px;align-items:center;border:1px solid var(--amber);color:var(--amber-ink);border-radius:3px;padding:6px 10px;font:500 .74rem/1 var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px;display:grid;gap:14px;min-width:0}
+label{font:500 .78rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+textarea{width:100%;min-height:110px;resize:vertical;font:400 1rem/1.5 var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:12px}
+textarea:focus{outline:2px solid var(--amber);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 11px;font:400 .82rem/1.2 var(--body);cursor:pointer;text-align:left}
+.chip:hover{border-color:var(--data)}
+.result{display:grid;gap:10px}
+.pred{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.pred b{font:800 2rem/1 var(--display);text-transform:uppercase}
+.pill{font:500 .74rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:6px 9px;border-radius:3px;border:1px solid var(--line)}
+.pill.yes{border-color:var(--ok);color:var(--ok)}
+.probs{display:grid;gap:8px}
+.prob{display:grid;grid-template-columns:minmax(0,11rem) 1fr 3.4rem;gap:10px;align-items:center;font-size:.88rem}
+.prob .bar{height:10px;background:var(--line);border-radius:1px;overflow:hidden}
+.prob .bar span{display:block;height:100%;background:var(--data);transition:width .25s ease-out}
+.prob.top .bar span{background:var(--amber)}
+.prob .v{font:500 .82rem/1 var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.why{font-size:.95rem;line-height:1.9}
+.why mark{background:color-mix(in srgb,var(--amber) 26%,transparent);color:inherit;padding:1px 3px;border-radius:2px}
+.why mark.neg{background:color-mix(in srgb,var(--data) 20%,transparent)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{border:1px solid var(--line);border-radius:3px;padding:10px}
+.metric span{font:500 .7rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.metric b{display:block;font:800 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums;margin-top:4px}
+.cm-wrap{overflow-x:auto}
+table.cm{border-collapse:collapse;font:400 .74rem/1.2 var(--mono);font-variant-numeric:tabular-nums;min-width:100%}
+.cm th,.cm td{border:1px solid var(--line);padding:6px 5px;text-align:center}
+.cm th{font-weight:500;color:var(--muted)}
+.cm th.rowh{text-align:left;white-space:nowrap}
+.cm td.diag{font-weight:600}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:30px 1fr;gap:10px;font-size:.92rem;counter-increment:s}
+.steps li::before{content:counter(s,decimal-leading-zero);font:500 .78rem/1.7 var(--mono);color:var(--amber-ink)}
+.note{font-size:.86rem;color:var(--muted);border-left:2px solid var(--amber);padding-left:12px}
+footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
+.btn{display:inline-flex;gap:8px;align-items:center;justify-self:start;padding:11px 16px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:600 .95rem/1 var(--body);cursor:pointer}
+.btn:hover{background:var(--data);border-color:var(--data)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="../" id="back">← Portafolio</a>
+    <a href="?lang=en" id="lang" hreflang="en">English</a>
+  </div>
+
+  <section class="intro">
+    <span class="badge" id="t-badge">Datos sintéticos · demo</span>
+    <h1 id="t-title">Clasificador de fallas</h1>
+    <p id="t-intro">Escribe una nota de mantenimiento como la escribiría un técnico y el modelo predice qué componente falló y si hubo reemplazo. Es una versión pequeña del clasificador real, entrenada aquí mismo en tu navegador.</p>
+    <p class="note" id="t-honest">Las notas de entrenamiento son sintéticas: las generé con plantillas a partir del vocabulario típico de planta. El modelo real se entrenó con 51,525 registros privados de la empresa, que no se publican.</p>
+  </section>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="t-try">
+      <h2 id="t-try">Pruébalo</h2>
+      <label for="note" id="t-label">Nota de mantenimiento</label>
+      <textarea id="note" spellcheck="false">Ruido fuerte en motor de banda, se cambió balero lado acople</textarea>
+      <div class="chips" id="chips" aria-label="Ejemplos"></div>
+      <button class="btn" type="button" id="go">Clasificar</button>
+      <div class="result" aria-live="polite">
+        <div class="pred"><span class="eyebrow" id="t-pred">Componente</span><b id="pred">—</b><span class="pill" id="repl">—</span></div>
+        <div class="probs" id="probs"></div>
+        <span class="eyebrow" id="t-why">Palabras que más pesaron</span>
+        <p class="why" id="why"></p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="t-eval">
+      <h2 id="t-eval">Evaluación</h2>
+      <p class="muted" id="t-evalp">Medida sobre notas que el modelo no vio al entrenar (20% del conjunto).</p>
+      <div class="metrics">
+        <div class="metric"><span id="t-p">Precisión</span><b id="m-p">—</b></div>
+        <div class="metric"><span>Recall</span><b id="m-r">—</b></div>
+        <div class="metric"><span>F1</span><b id="m-f">—</b></div>
+      </div>
+      <span class="eyebrow" id="t-cm">Matriz de confusión · real vs. predicho</span>
+      <div class="cm-wrap"><table class="cm" id="cm"></table></div>
+      <span class="eyebrow" id="t-how">Cómo funciona</span>
+      <ol class="steps" id="how"></ol>
+    </section>
+  </div>
+
+  <footer>
+    <span id="t-foot">Hecho por Luis Manuel Macías Patiño · Naive Bayes multinomial escrito desde cero en JavaScript, sin librerías.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var EN = /[?&]lang=en\b/.test(location.search);
+  var CLASSES = ['bearing','belt','sensor','electrical','pneumatic','nozzle'];
+  var NAMES = EN
+    ? {bearing:'Bearing',belt:'Belt / conveyor',sensor:'Sensor',electrical:'Electrical (fuse, relay)',pneumatic:'Pneumatic',nozzle:'SMT nozzle / head'}
+    : {bearing:'Rodamiento',belt:'Banda / transportador',sensor:'Sensor',electrical:'Eléctrico (fusible, relevador)',pneumatic:'Neumático',nozzle:'Boquilla / cabezal SMT'};
+  var SHORT = EN
+    ? {bearing:'Bearing',belt:'Belt',sensor:'Sensor',electrical:'Electr.',pneumatic:'Pneum.',nozzle:'Nozzle'}
+    : {bearing:'Rodam.',belt:'Banda',sensor:'Sensor',electrical:'Eléctr.',pneumatic:'Neum.',nozzle:'Boquilla'};
+
+  /* ---------- datos sintéticos (semilla fija para que siempre salga igual) ---------- */
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  var R = rng(20261024), pick = function(a){return a[Math.floor(R()*a.length)]};
+  var SYMPTOM = {
+    bearing:['ruido fuerte en motor','vibracion excesiva','balero caliente','zumbido en eje','motor trabado','rodamiento con juego','golpeteo en flecha','ruido metalico en reductor'],
+    belt:['banda rota','banda desalineada','banda patina','conveyor detenido','banda desgastada','transportador no avanza','banda con grietas','tension baja en banda'],
+    sensor:['sensor no detecta','fotocelda sucia','sensor inductivo sin señal','lectura erratica de sensor','sensor de presencia falla','encoder sin pulso','sensor optico desalineado','termopar marca error'],
+    electrical:['fusible quemado','relevador no cierra','contactor pegado','breaker disparado','falso contacto en clema','cable dañado en tablero','fuente de 24v sin voltaje','corto en arnes'],
+    pneumatic:['fuga de aire','valvula solenoide no acciona','cilindro no regresa','manguera rota','presion baja de aire','conexion rapida con fuga','piston lento','regulador de aire dañado'],
+    nozzle:['boquilla obstruida','pick and place no toma componente','nozzle dañado','cabezal pierde vacio','componentes mal colocados','boquilla rota','vacio bajo en cabezal','feeder alimenta mal y nozzle golpea']
+  };
+  var PART = {
+    bearing:['balero','rodamiento','balero 6204','rodamiento lado acople','chumacera'],
+    belt:['banda','banda dentada','banda del conveyor','banda plana','polea tensora'],
+    sensor:['sensor','fotocelda','sensor inductivo','sensor optico','encoder'],
+    electrical:['fusible','relevador','contactor','breaker','clema'],
+    pneumatic:['valvula','manguera','cilindro','conexion rapida','sello de cilindro'],
+    nozzle:['boquilla','nozzle','boquilla 503','filtro de nozzle','cabezal']
+  };
+  var REPLACE = ['se cambio','se reemplazo','se instalo nuevo','se sustituyo','cambio de','reemplazo de'];
+  var FIX = ['se ajusto','se limpio','se reviso','se calibro','se lubrico','se apreto'];
+  var WHERE = ['','','en linea 2','en linea SMT','turno nocturno','equipo 12','horno de reflujo','area de pruebas','maquina de ola'];
+  function makeNote(c, repl){
+    var parts=[pick(SYMPTOM[c]), (repl?pick(REPLACE):pick(FIX))+' '+pick(PART[c]), pick(WHERE)];
+    if(R()<0.15){ var other=pick(CLASSES); if(other!==c) parts.push(pick(SYMPTOM[other])); } /* ruido realista */
+    return parts.filter(Boolean).join(', ');
+  }
+  var DATA=[];
+  for(var i=0;i<1200;i++){var c=CLASSES[i%CLASSES.length], r=R()<0.62; DATA.push({text:makeNote(c,r),y:c,r:r})}
+  for(var j=DATA.length-1;j>0;j--){var k=Math.floor(R()*(j+1)),t=DATA[j];DATA[j]=DATA[k];DATA[k]=t}
+  var split=Math.floor(DATA.length*0.8), TRAIN=DATA.slice(0,split), TEST=DATA.slice(split);
+
+  /* ---------- texto -> tokens ---------- */
+  var STOP={de:1,en:1,el:1,la:1,del:1,con:1,y:1,se:1,lado:1,a:1,por:1,the:1,no:0};
+  function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ')}
+  function tokens(s){var w=norm(s).split(/\s+/).filter(function(x){return x&&!STOP[x]});var out=w.slice();for(var i=0;i<w.length-1;i++)out.push(w[i]+'_'+w[i+1]);return out}
+
+  /* ---------- Naive Bayes multinomial ---------- */
+  function trainNB(rows,label,classes){
+    var m={classes:classes,prior:{},count:{},total:{},vocab:{}};
+    classes.forEach(function(c){m.count[c]={};m.total[c]=0;m.prior[c]=0});
+    rows.forEach(function(r){var c=label(r);m.prior[c]++;tokens(r.text).forEach(function(t){m.count[c][t]=(m.count[c][t]||0)+1;m.total[c]++;m.vocab[t]=1})});
+    m.V=Object.keys(m.vocab).length;classes.forEach(function(c){m.prior[c]=Math.log(m.prior[c]/rows.length)});
+    return m;
+  }
+  function lp(m,c,t){return Math.log(((m.count[c][t]||0)+1)/(m.total[c]+m.V))}
+  function predict(m,text){
+    var tk=tokens(text), s={};
+    m.classes.forEach(function(c){var v=m.prior[c];tk.forEach(function(t){if(m.vocab[t])v+=lp(m,c,t)});s[c]=v});
+    var mx=Math.max.apply(null,m.classes.map(function(c){return s[c]})),sum=0,p={};
+    m.classes.forEach(function(c){p[c]=Math.exp(s[c]-mx);sum+=p[c]});m.classes.forEach(function(c){p[c]/=sum});
+    var best=m.classes.slice().sort(function(a,b){return p[b]-p[a]});
+    return {p:p,best:best,tk:tk};
+  }
+  var COMP=trainNB(TRAIN,function(r){return r.y},CLASSES);
+  var REPL=trainNB(TRAIN,function(r){return r.r?'yes':'no'},['yes','no']);
+
+  /* ---------- evaluación ---------- */
+  var cm={};CLASSES.forEach(function(a){cm[a]={};CLASSES.forEach(function(b){cm[a][b]=0})});
+  TEST.forEach(function(r){cm[r.y][predict(COMP,r.text).best[0]]++});
+  var P=0,Rc=0,F=0;
+  CLASSES.forEach(function(c){var tp=cm[c][c],fp=0,fn=0;CLASSES.forEach(function(o){if(o!==c){fp+=cm[o][c];fn+=cm[c][o]}});
+    var p=tp/(tp+fp||1),r=tp/(tp+fn||1);P+=p;Rc+=r;F+=(p+r?2*p*r/(p+r):0)});
+  P/=CLASSES.length;Rc/=CLASSES.length;F/=CLASSES.length;
+  function pct(x){return (x*100).toFixed(1)+'%'}
+  document.getElementById('m-p').textContent=pct(P);
+  document.getElementById('m-r').textContent=pct(Rc);
+  document.getElementById('m-f').textContent=pct(F);
+  var html='<thead><tr><th class="rowh">'+(EN?'real ↓ / pred →':'real ↓ / pred →')+'</th>'+CLASSES.map(function(c){return '<th scope="col">'+SHORT[c]+'</th>'}).join('')+'</tr></thead><tbody>';
+  CLASSES.forEach(function(a){var row=0;CLASSES.forEach(function(b){row+=cm[a][b]});
+    html+='<tr><th scope="row" class="rowh">'+SHORT[a]+'</th>'+CLASSES.map(function(b){var v=cm[a][b],a2=row?v/row:0;
+      return '<td class="'+(a===b?'diag':'')+'" style="background:color-mix(in srgb,var('+(a===b?'--amber':'--data')+') '+Math.round(a2*(a===b?55:80))+'%,transparent)">'+v+'</td>'}).join('')+'</tr>'});
+  document.getElementById('cm').innerHTML=html+'</tbody>';
+
+  /* ---------- interfaz ---------- */
+  var EX = ['Fuga de aire en manguera del cilindro, se cambio conexion rapida','Pick and place no toma componente, se limpio boquilla','Sensor optico desalineado en conveyor, se ajusto','Breaker disparado en tablero, se reemplazo contactor','Banda patina en transportador linea 2, se cambio banda dentada'];
+  var chips=document.getElementById('chips');
+  EX.forEach(function(e){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=e;b.addEventListener('click',function(){note.value=e;run()});chips.appendChild(b)});
+  var note=document.getElementById('note');
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function run(){
+    var text=note.value.trim(); if(!text){return}
+    var out=predict(COMP,text), c1=out.best[0], c2=out.best[1];
+    document.getElementById('pred').textContent=NAMES[c1];
+    var rp=predict(REPL,text), yes=rp.best[0]==='yes';
+    var pill=document.getElementById('repl'); pill.className='pill'+(yes?' yes':'');
+    pill.textContent=yes?(EN?'Part replaced':'Hubo reemplazo'):(EN?'No replacement (fix / adjust)':'Sin reemplazo (ajuste o limpieza)');
+    document.getElementById('probs').innerHTML=out.best.slice(0,4).map(function(c,i){
+      return '<div class="prob'+(i?'':' top')+'"><span>'+NAMES[c]+'</span><div class="bar"><span style="width:'+(out.p[c]*100).toFixed(1)+'%"></span></div><span class="v">'+pct(out.p[c])+'</span></div>'}).join('');
+    var words=norm(text).split(/\s+/).filter(Boolean), orig=text.split(/\s+/);
+    var scored=words.map(function(w,i){var s=COMP.vocab[w]?lp(COMP,c1,w)-lp(COMP,c2,w):0;return {w:orig[i]||w,s:s}});
+    var top=scored.slice().sort(function(a,b){return Math.abs(b.s)-Math.abs(a.s)}).slice(0,4).filter(function(x){return Math.abs(x.s)>0.4}).map(function(x){return x.w});
+    document.getElementById('why').innerHTML=scored.map(function(x){var k=top.indexOf(x.w)>=0;return k?'<mark class="'+(x.s<0?'neg':'')+'" title="'+x.s.toFixed(2)+'">'+esc(x.w)+'</mark>':esc(x.w)}).join(' ')+
+      '<br><span class="muted" style="font-size:.82rem">'+(EN?'Highlighted words pushed the model toward “':'Las palabras resaltadas inclinaron el modelo hacia “')+NAMES[c1]+(EN?'” instead of “':'” en lugar de “')+NAMES[c2]+'”.</span>';
+  }
+  document.getElementById('go').addEventListener('click',run);
+  note.addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))run()});
+
+  var HOW = EN ? [
+    'Generate 1,200 synthetic notes from plant-floor templates with a fixed seed (6 components, 15% cross-class noise).',
+    'Normalize text: lowercase, strip accents and punctuation, drop stopwords.',
+    'Build features from single words and word pairs (bag of words with bigrams).',
+    'Train two multinomial Naive Bayes models with Laplace smoothing: component and replacement yes/no.',
+    'Evaluate on a 20% hold-out with macro precision, recall and F1, plus the confusion matrix.'
+  ] : [
+    'Genero 1,200 notas sintéticas con plantillas de planta y semilla fija (6 componentes, 15% de ruido entre clases).',
+    'Normalizo el texto: minúsculas, sin acentos ni signos, sin palabras vacías.',
+    'Construyo variables con palabras y pares de palabras (bolsa de palabras con bigramas).',
+    'Entreno dos Naive Bayes multinomiales con suavizado de Laplace: componente y reemplazo sí/no.',
+    'Evalúo con 20% de notas reservadas: precisión, recall y F1 macro, más la matriz de confusión.'
+  ];
+  document.getElementById('how').innerHTML=HOW.map(function(h){return '<li><span>'+h+'</span></li>'}).join('');
+
+  if(EN){
+    document.documentElement.lang='en';
+    document.title='Failure classifier · Demo · Luis Manuel Macías Patiño';
+    var T={'t-badge':'Synthetic data · demo','t-title':'Failure classifier',
+      't-intro':'Type a maintenance note the way a technician would write it, and the model predicts which component failed and whether a part was replaced. It is a small version of the real classifier, trained right here in your browser. Notes are in Spanish, as they are written on the plant floor; try the examples.',
+      't-honest':'Training notes are synthetic: I generated them from templates using typical plant vocabulary. The real model was trained on 51,525 private company records, which are not published.',
+      't-try':'Try it','t-label':'Maintenance note','t-pred':'Component','t-why':'Words that weighed the most','t-eval':'Evaluation',
+      't-evalp':'Measured on notes the model did not see during training (20% of the set).','t-p':'Precision','t-cm':'Confusion matrix · actual vs. predicted',
+      't-how':'How it works','t-foot':'Built by Luis Manuel Macías Patiño · multinomial Naive Bayes written from scratch in JavaScript, no libraries.'};
+    Object.keys(T).forEach(function(id){document.getElementById(id).textContent=T[id]});
+    document.getElementById('go').textContent='Classify';
+    var back=document.getElementById('back');back.href='../en/';back.textContent='← Portfolio';
+    var lang=document.getElementById('lang');lang.href='./';lang.textContent='Español';lang.hreflang='es';
+  }
+  run();
+})();
+</script>
+</body>
+</html>
