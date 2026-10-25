@@ -6,11 +6,15 @@
 <title>Luis Manuel Macías Patiño · Científico de datos para manufactura</title>
 <meta name="description" content="Científico de datos e ingeniero en mantenimiento industrial en Guadalajara, México. NLP de fallas, automatización con Python y SQL, migración a SAP y sistemas web para planta y finanzas.">
 <link rel="canonical" href="https://kawaiidatadev.github.io/">
+<link rel="alternate" hreflang="es" href="https://kawaiidatadev.github.io/">
+<link rel="alternate" hreflang="en" href="https://kawaiidatadev.github.io/en/">
+<link rel="alternate" hreflang="x-default" href="https://kawaiidatadev.github.io/">
 <meta name="theme-color" content="#0D141B">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D141B'/%3E%3Cpath d='M6 38 C16 30 22 30 32 36 S48 42 58 30' stroke='%23F0B347' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="profile">
 <meta property="og:locale" content="es_MX">
+<meta property="og:locale:alternate" content="en_US">
 <meta property="og:site_name" content="Luis Manuel Macías Patiño">
 <meta property="og:title" content="Luis Manuel Macías Patiño · Científico de datos para manufactura">
 <meta property="og:description" content="Científico de datos e ingeniero en mantenimiento industrial en Guadalajara, México. NLP de fallas, automatización con Python y SQL, migración a SAP y sistemas web para planta y finanzas.">
@@ -77,6 +81,10 @@ p{margin:0}
 .motion-btn:hover{color:var(--ink);border-color:var(--muted)}
 .motion-btn .ico{width:10px;height:10px;display:inline-block;background:linear-gradient(90deg,currentColor 35%,transparent 35% 65%,currentColor 65%)}
 .motion-btn[aria-pressed="true"] .ico{background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%)}
+.lang-btn{display:inline-flex;align-items:center;justify-content:center;min-height:34px;min-width:36px;padding:6px 8px;border:1px solid var(--line);border-radius:3px;font:600 .72rem/1 var(--mono);letter-spacing:.06em;color:var(--muted);text-decoration:none;background:var(--panel)}
+.lang-btn:hover{color:var(--ink);border-color:var(--muted)}
+.demo-link{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;padding:10px 14px;border-radius:3px;background:var(--ink);color:var(--paper);font-weight:600;text-decoration:none}
+.demo-link:hover{background:var(--data)}
 .skip{position:absolute;left:12px;top:-60px;z-index:20;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:3px;text-decoration:none}
 .skip:focus{top:calc(8px + env(safe-area-inset-top,0px))}
 section[id],header[id]{scroll-margin-top:64px}
@@ -314,6 +322,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <li class="hide-sm"><a href="#habilidades">Habilidades</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
+      <a class="lang-btn" href="en/" hreflang="en" lang="en" title="English version">EN</a>
       <button type="button" class="motion-btn" id="motion-btn" aria-pressed="false" title="Pausar animaciones"><span class="ico" aria-hidden="true"></span><span class="lbl">Pausar animaciones</span></button>
     </div>
   </div>
@@ -334,7 +343,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       </div>
       <div class="cta">
         <a class="btn primary" href="https://wa.me/523324393525?text=Hola%20Luis%2C%20vi%20tu%20portafolio%20y%20me%20gustar%C3%ADa%20platicar%20contigo." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>
-        <a class="btn ghost" href="#proyectos">Ver proyectos</a>
+        <a class="btn ghost" href="cv/CV_Luis_Manuel_Macias_Patino_ES.pdf" target="_blank" rel="noopener">Descargar CV (PDF)</a>
       </div>
     </div>
 
@@ -374,6 +383,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>Es la base del análisis RAM (confiabilidad, disponibilidad y mantenibilidad) del área.</li>
         </ul>
         <div class="tag-row"><span class="tag">Python</span><span class="tag">NLP</span><span class="tag">Machine Learning</span><span class="tag">Etiquetado de datos</span><span class="tag">Análisis RAM</span></div>
+        <a class="demo-link" href="demo/">Probar una demo interactiva <span aria-hidden="true">→</span></a>
+        <small class="muted">La demo usa datos sintéticos; el modelo real trabaja con datos privados de la empresa.</small>
       </div>
       <div class="f-viz">
         <div class="funnel" role="img" aria-label="De 51,525 registros, 2,992 fallas segmentadas y 139 etiquetadas a mano">
@@ -669,6 +680,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
             <button type="button" id="copy-wa">Copiar</button>
             <a href="https://wa.me/523324393525?text=Hola%20Luis%2C%20vi%20tu%20portafolio%20y%20me%20gustar%C3%ADa%20platicar%20contigo." target="_blank" rel="noopener">Abrir chat</a>
           </div>
+        </div>
+        <div class="line">
+          <div><small>Currículum</small><b>CV en PDF · 1 página</b></div>
+          <a href="cv/CV_Luis_Manuel_Macias_Patino_ES.pdf" target="_blank" rel="noopener">Descargar</a>
         </div>
         <div class="line">
           <div><small>GitHub</small><b>kawaiidatadev</b></div>
