@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Clasificador de fallas · Demo · Luis Manuel Macías Patiño</title>
-<meta name="description" content="Demo interactiva con datos sintéticos: un clasificador Naive Bayes que lee notas de mantenimiento y predice el componente que falló.">
+<meta name="description" content="Demo interactiva con datos sintéticos: un clasificador que lee notas de mantenimiento, predice el componente que falló y detecta si hubo reemplazo.">
 <link rel="canonical" href="https://kawaiidatadev.github.io/demo/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D141B'/%3E%3Cpath d='M6 38 C16 30 22 30 32 36 S48 42 58 30' stroke='%23F0B347' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <meta property="og:title" content="Clasificador de fallas · Demo">
@@ -18,17 +18,17 @@
 /* Layout: misma hoja técnica del portafolio; columna de 1000px con paneles de instrumento. */
 :root{
   --paper:#EDF1F4; --panel:#FFFFFF; --ink:#13202B; --muted:#56646F; --line:#C8D1D9;
-  --amber:#C98A12; --amber-ink:#875800; --data:#1D6C88; --grid:rgba(29,108,136,.07); --ok:#2E7D4F;
+  --amber:#C98A12; --amber-ink:#875800; --data:#1D6C88; --grid:rgba(29,108,136,.07); --ok:#2E7D4F; --warn:#A4471A;
   --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
-  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; color-scheme:dark}}
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; --warn:#F08A5D; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#0D141B; --panel:#151F29; --ink:#E5EBF0; --muted:#94A2AE; --line:#283744;
-  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; color-scheme:dark}
+  --amber:#F0B347; --amber-ink:#F0B347; --data:#62B5D2; --grid:rgba(98,181,210,.06); --ok:#6CC892; --warn:#F08A5D; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--body);
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
@@ -51,39 +51,49 @@ p{margin:0}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px;display:grid;gap:14px;min-width:0}
 label{font:500 .78rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-textarea{width:100%;min-height:110px;resize:vertical;font:400 1rem/1.5 var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:12px}
+textarea{width:100%;min-height:96px;resize:vertical;font:400 1rem/1.5 var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:12px}
 textarea:focus{outline:2px solid var(--amber);outline-offset:1px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 11px;font:400 .82rem/1.2 var(--body);cursor:pointer;text-align:left}
 .chip:hover{border-color:var(--data)}
 .result{display:grid;gap:10px}
-.pred{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.pred{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
 .pred b{font:800 2rem/1 var(--display);text-transform:uppercase}
-.pill{font:500 .74rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:6px 9px;border-radius:3px;border:1px solid var(--line)}
-.pill.yes{border-color:var(--ok);color:var(--ok)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font:500 .74rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:6px 9px;border-radius:3px;border:1px solid var(--line);color:var(--muted)}
+.pill.ok{border-color:var(--ok);color:var(--ok)}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.pill.amber{border-color:var(--amber);color:var(--amber-ink)}
 .probs{display:grid;gap:8px}
-.prob{display:grid;grid-template-columns:minmax(0,11rem) 1fr 3.4rem;gap:10px;align-items:center;font-size:.88rem}
+.prob{display:grid;grid-template-columns:minmax(0,11.5rem) 1fr 3.4rem;gap:10px;align-items:center;font-size:.88rem}
 .prob .bar{height:10px;background:var(--line);border-radius:1px;overflow:hidden}
 .prob .bar span{display:block;height:100%;background:var(--data);transition:width .25s ease-out}
 .prob.top .bar span{background:var(--amber)}
 .prob .v{font:500 .82rem/1 var(--mono);text-align:right;font-variant-numeric:tabular-nums}
 .why{font-size:.95rem;line-height:1.9}
 .why mark{background:color-mix(in srgb,var(--amber) 26%,transparent);color:inherit;padding:1px 3px;border-radius:2px}
-.why mark.neg{background:color-mix(in srgb,var(--data) 20%,transparent)}
+.why mark.act{background:color-mix(in srgb,var(--ok) 22%,transparent)}
+.why .unk{text-decoration:underline dotted var(--muted);text-underline-offset:3px;color:var(--muted)}
+.note{font-size:.86rem;color:var(--muted);border-left:2px solid var(--amber);padding-left:12px}
 .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .metric{border:1px solid var(--line);border-radius:3px;padding:10px}
 .metric span{font:500 .7rem/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .metric b{display:block;font:800 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums;margin-top:4px}
-.cm-wrap{overflow-x:auto}
-table.cm{border-collapse:collapse;font:400 .74rem/1.2 var(--mono);font-variant-numeric:tabular-nums;min-width:100%}
+.scroll{overflow-x:auto}
+table.cm,table.hard{border-collapse:collapse;font:400 .74rem/1.3 var(--mono);font-variant-numeric:tabular-nums;width:100%}
 .cm th,.cm td{border:1px solid var(--line);padding:6px 5px;text-align:center}
 .cm th{font-weight:500;color:var(--muted)}
 .cm th.rowh{text-align:left;white-space:nowrap}
 .cm td.diag{font-weight:600}
+.hard th,.hard td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+.hard th{font-weight:500;color:var(--muted)}
+.hard td.n{font-family:var(--body);font-size:.84rem}
+.hard .y{color:var(--ok);font-weight:600}
+.hard .x{color:var(--warn);font-weight:600}
 .steps{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:s}
 .steps li{display:grid;grid-template-columns:30px 1fr;gap:10px;font-size:.92rem;counter-increment:s}
 .steps li::before{content:counter(s,decimal-leading-zero);font:500 .78rem/1.7 var(--mono);color:var(--amber-ink)}
-.note{font-size:.86rem;color:var(--muted);border-left:2px solid var(--amber);padding-left:12px}
+.full{margin-top:20px}
 footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
 .btn{display:inline-flex;gap:8px;align-items:center;justify-self:start;padding:11px 16px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:600 .95rem/1 var(--body);cursor:pointer}
 .btn:hover{background:var(--data);border-color:var(--data)}
@@ -99,7 +109,7 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
   <section class="intro">
     <span class="badge" id="t-badge">Datos sintéticos · demo</span>
     <h1 id="t-title">Clasificador de fallas</h1>
-    <p id="t-intro">Escribe una nota de mantenimiento como la escribiría un técnico y el modelo predice qué componente falló y si hubo reemplazo. Es una versión pequeña del clasificador real, entrenada aquí mismo en tu navegador.</p>
+    <p id="t-intro">Escribe una nota de mantenimiento como la escribiría un técnico. El modelo predice qué componente falló, dice qué tan seguro está y detecta si hubo reemplazo. Es una versión pequeña del clasificador real, entrenada aquí mismo en tu navegador.</p>
     <p class="note" id="t-honest">Las notas de entrenamiento son sintéticas: las generé con plantillas a partir del vocabulario típico de planta. El modelo real se entrenó con 51,525 registros privados de la empresa, que no se publican.</p>
   </section>
 
@@ -107,13 +117,14 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
     <section class="panel" aria-labelledby="t-try">
       <h2 id="t-try">Pruébalo</h2>
       <label for="note" id="t-label">Nota de mantenimiento</label>
-      <textarea id="note" spellcheck="false">Ruido fuerte en motor de banda, se cambió balero lado acople</textarea>
+      <textarea id="note" spellcheck="false">ruido fuerte en el termostato</textarea>
       <div class="chips" id="chips" aria-label="Ejemplos"></div>
       <button class="btn" type="button" id="go">Clasificar</button>
       <div class="result" aria-live="polite">
-        <div class="pred"><span class="eyebrow" id="t-pred">Componente</span><b id="pred">—</b><span class="pill" id="repl">—</span></div>
+        <div class="pred"><span class="eyebrow" id="t-pred">Componente</span><b id="pred">—</b></div>
+        <div class="pills"><span class="pill" id="conf">—</span><span class="pill" id="act">—</span></div>
         <div class="probs" id="probs"></div>
-        <span class="eyebrow" id="t-why">Palabras que más pesaron</span>
+        <span class="eyebrow" id="t-why">Cómo leyó tu nota</span>
         <p class="why" id="why"></p>
       </div>
     </section>
@@ -127,11 +138,20 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
         <div class="metric"><span>F1</span><b id="m-f">—</b></div>
       </div>
       <span class="eyebrow" id="t-cm">Matriz de confusión · real vs. predicho</span>
-      <div class="cm-wrap"><table class="cm" id="cm"></table></div>
-      <span class="eyebrow" id="t-how">Cómo funciona</span>
-      <ol class="steps" id="how"></ol>
+      <div class="scroll"><table class="cm" id="cm"></table></div>
     </section>
   </div>
+
+  <section class="panel full" aria-labelledby="t-hard">
+    <h2 id="t-hard">Pruebas difíciles</h2>
+    <p class="muted" id="t-hardp">Notas escritas a mano, que no salen de las plantillas. Se evalúan en vivo cada vez que abres la página.</p>
+    <div class="scroll"><table class="hard" id="hard"></table></div>
+  </section>
+
+  <section class="panel full" aria-labelledby="t-how">
+    <h2 id="t-how">Cómo funciona</h2>
+    <ol class="steps" id="how"></ol>
+  </section>
 
   <footer>
     <span id="t-foot">Hecho por Luis Manuel Macías Patiño · Naive Bayes multinomial escrito desde cero en JavaScript, sin librerías.</span>
@@ -141,77 +161,110 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
 <script>
 (function(){
   var EN = /[?&]lang=en\b/.test(location.search);
-  var CLASSES = ['bearing','belt','sensor','electrical','pneumatic','nozzle'];
+  var CLASSES = ['bearing','belt','sensor','electrical','pneumatic','nozzle','thermal'];
   var NAMES = EN
-    ? {bearing:'Bearing',belt:'Belt / conveyor',sensor:'Sensor',electrical:'Electrical (fuse, relay)',pneumatic:'Pneumatic',nozzle:'SMT nozzle / head'}
-    : {bearing:'Rodamiento',belt:'Banda / transportador',sensor:'Sensor',electrical:'Eléctrico (fusible, relevador)',pneumatic:'Neumático',nozzle:'Boquilla / cabezal SMT'};
+    ? {bearing:'Bearing / drive',belt:'Belt / conveyor',sensor:'Sensor / detection',electrical:'Electrical (fuse, relay)',pneumatic:'Pneumatic',nozzle:'SMT nozzle / head',thermal:'Thermal / temperature'}
+    : {bearing:'Rodamiento / transmisión',belt:'Banda / transportador',sensor:'Sensor / detección',electrical:'Eléctrico (fusible, relevador)',pneumatic:'Neumático',nozzle:'Boquilla / cabezal SMT',thermal:'Térmico / temperatura'};
   var SHORT = EN
-    ? {bearing:'Bearing',belt:'Belt',sensor:'Sensor',electrical:'Electr.',pneumatic:'Pneum.',nozzle:'Nozzle'}
-    : {bearing:'Rodam.',belt:'Banda',sensor:'Sensor',electrical:'Eléctr.',pneumatic:'Neum.',nozzle:'Boquilla'};
+    ? {bearing:'Bearing',belt:'Belt',sensor:'Sensor',electrical:'Electr.',pneumatic:'Pneum.',nozzle:'Nozzle',thermal:'Thermal'}
+    : {bearing:'Rodam.',belt:'Banda',sensor:'Sensor',electrical:'Eléctr.',pneumatic:'Neum.',nozzle:'Boquilla',thermal:'Térmico'};
 
-  /* ---------- datos sintéticos (semilla fija para que siempre salga igual) ---------- */
+  /* ---------- 1. Datos sintéticos con semilla fija ---------- */
   function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-  var R = rng(20261024), pick = function(a){return a[Math.floor(R()*a.length)]};
+  var R = rng(20261025), pick = function(a){return a[Math.floor(R()*a.length)]};
   var SYMPTOM = {
-    bearing:['ruido fuerte en motor','vibracion excesiva','balero caliente','zumbido en eje','motor trabado','rodamiento con juego','golpeteo en flecha','ruido metalico en reductor'],
-    belt:['banda rota','banda desalineada','banda patina','conveyor detenido','banda desgastada','transportador no avanza','banda con grietas','tension baja en banda'],
-    sensor:['sensor no detecta','fotocelda sucia','sensor inductivo sin señal','lectura erratica de sensor','sensor de presencia falla','encoder sin pulso','sensor optico desalineado','termopar marca error'],
-    electrical:['fusible quemado','relevador no cierra','contactor pegado','breaker disparado','falso contacto en clema','cable dañado en tablero','fuente de 24v sin voltaje','corto en arnes'],
-    pneumatic:['fuga de aire','valvula solenoide no acciona','cilindro no regresa','manguera rota','presion baja de aire','conexion rapida con fuga','piston lento','regulador de aire dañado'],
-    nozzle:['boquilla obstruida','pick and place no toma componente','nozzle dañado','cabezal pierde vacio','componentes mal colocados','boquilla rota','vacio bajo en cabezal','feeder alimenta mal y nozzle golpea']
+    bearing:['ruido fuerte en motor','vibracion excesiva','balero caliente','zumbido en eje','motor trabado','rodamiento con juego','golpeteo en flecha','ruido metalico en reductor','chirrido al girar','flecha con juego axial','acoplamiento desalineado','reductor con ruido'],
+    belt:['banda rota','banda desalineada','banda patina','conveyor detenido','banda desgastada','transportador no avanza','banda con grietas','tension baja en banda','banda hace ruido','rodillo atorado','cadena del transportador floja','ruido fuerte en banda'],
+    sensor:['sensor no detecta','fotocelda sucia','sensor inductivo sin señal','lectura erratica de sensor','sensor de presencia falla','encoder sin pulso','sensor optico desalineado','lector de codigo no lee','camara de inspeccion no detecta','falsa deteccion de pieza','sensor de nivel no marca','detector de proximidad intermitente'],
+    electrical:['fusible quemado','relevador no cierra','contactor pegado','breaker disparado','falso contacto en clema','cable dañado en tablero','fuente de 24v sin voltaje','corto en arnes','olor a quemado en tablero','pastilla se bota','variador marca falla','sin energia en tablero'],
+    pneumatic:['fuga de aire','valvula solenoide no acciona','cilindro no regresa','manguera rota','presion baja de aire','conexion rapida con fuga','piston lento','regulador de aire dañado','silbido por fuga de aire','ventosa no sujeta','unidad de mantenimiento con agua','compresor no levanta presion'],
+    nozzle:['boquilla obstruida','pick and place no toma componente','nozzle dañado','cabezal pierde vacio','componentes mal colocados','boquilla rota','vacio bajo en cabezal','feeder alimenta mal','componente volteado en pcb','error de vision en cabezal','tombstone en componentes','cabezal choca con pcb'],
+    thermal:['termostato no corta','sobrecalentamiento','temperatura fuera de rango','horno no calienta','resistencia abierta','termopar marca error','controlador de temperatura falla','ventilador no gira','zona del horno fria','alarma de alta temperatura','extractor no jala','ruido fuerte en ventilador','termostato dañado','calentador no enciende']
   };
   var PART = {
-    bearing:['balero','rodamiento','balero 6204','rodamiento lado acople','chumacera'],
-    belt:['banda','banda dentada','banda del conveyor','banda plana','polea tensora'],
-    sensor:['sensor','fotocelda','sensor inductivo','sensor optico','encoder'],
-    electrical:['fusible','relevador','contactor','breaker','clema'],
-    pneumatic:['valvula','manguera','cilindro','conexion rapida','sello de cilindro'],
-    nozzle:['boquilla','nozzle','boquilla 503','filtro de nozzle','cabezal']
+    bearing:['balero','rodamiento','balero 6204','rodamiento lado acople','chumacera','cople','reductor','flecha'],
+    belt:['banda','banda dentada','banda del conveyor','polea tensora','rodillo','cadena','tensor'],
+    sensor:['sensor','fotocelda','sensor inductivo','sensor optico','encoder','lector de codigo','camara de inspeccion','sensor de proximidad'],
+    electrical:['fusible','relevador','contactor','breaker','clema','cable','fuente de poder','variador','arnes'],
+    pneumatic:['valvula','manguera','cilindro','conexion rapida','sello de cilindro','regulador','ventosa','filtro de aire'],
+    nozzle:['boquilla','nozzle','boquilla 503','filtro de nozzle','cabezal','feeder'],
+    thermal:['termostato','resistencia','termopar','controlador de temperatura','ventilador','calentador','extractor','sensor de temperatura']
   };
   var REPLACE = ['se cambio','se reemplazo','se instalo nuevo','se sustituyo','cambio de','reemplazo de'];
-  var FIX = ['se ajusto','se limpio','se reviso','se calibro','se lubrico','se apreto'];
-  var WHERE = ['','','en linea 2','en linea SMT','turno nocturno','equipo 12','horno de reflujo','area de pruebas','maquina de ola'];
+  var FIX = ['se ajusto','se limpio','se reviso','se calibro','se lubrico','se apreto','se reparo'];
+  var WHERE = ['','','','en linea 2','en linea SMT','turno nocturno','equipo 12','horno de reflujo','area de pruebas','maquina de ola'];
   var GENERIC = ['pieza','componente','refaccion','parte dañada'];
-  /* Ruido realista: 35% de las notas no nombran la pieza y 60% mencionan un síntoma de otra clase */
-  function makeNote(c, repl){
-    var part = R()<0.35 ? pick(GENERIC) : pick(PART[c]);
-    var parts=[pick(SYMPTOM[c]), (repl?pick(REPLACE):pick(FIX))+' '+part, pick(WHERE)];
-    if(R()<0.6){ var other=pick(CLASSES); if(other!==c){ var x=pick(SYMPTOM[other]); if(R()<0.5) parts.unshift(x); else parts.push(x); } }
+  /* Ruido realista: 25% de las notas no nombran la pieza, 35% mencionan un síntoma de otra clase y 10% no dicen qué se hizo */
+  function makeNote(c){
+    var parts=[pick(SYMPTOM[c])];
+    if(R()>0.10){ parts.push((R()<0.6?pick(REPLACE):pick(FIX))+' '+(R()<0.25?pick(GENERIC):pick(PART[c]))); }
+    parts.push(pick(WHERE));
+    if(R()<0.35){ var o=pick(CLASSES); if(o!==c){ var x=pick(SYMPTOM[o]); if(R()<0.5) parts.unshift(x); else parts.push(x); } }
     return parts.filter(Boolean).join(', ');
   }
   var DATA=[];
-  for(var i=0;i<1200;i++){var c=CLASSES[i%CLASSES.length], r=R()<0.62; DATA.push({text:makeNote(c,r),y:c,r:r})}
+  for(var i=0;i<1400;i++){ var c=CLASSES[i%CLASSES.length]; DATA.push({text:makeNote(c),y:c}); }
   for(var j=DATA.length-1;j>0;j--){var k=Math.floor(R()*(j+1)),t=DATA[j];DATA[j]=DATA[k];DATA[k]=t}
   var split=Math.floor(DATA.length*0.8), TRAIN=DATA.slice(0,split), TEST=DATA.slice(split);
 
-  /* ---------- texto -> tokens ---------- */
-  var STOP={de:1,en:1,el:1,la:1,del:1,con:1,y:1,se:1,lado:1,a:1,por:1,the:1,no:0};
-  function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ')}
-  function tokens(s){var w=norm(s).split(/\s+/).filter(function(x){return x&&!STOP[x]});var out=w.slice();for(var i=0;i<w.length-1;i++)out.push(w[i]+'_'+w[i+1]);return out}
-
-  /* ---------- Naive Bayes multinomial ---------- */
-  function trainNB(rows,label,classes){
-    var m={classes:classes,prior:{},count:{},total:{},vocab:{}};
-    classes.forEach(function(c){m.count[c]={};m.total[c]=0;m.prior[c]=0});
-    rows.forEach(function(r){var c=label(r);m.prior[c]++;tokens(r.text).forEach(function(t){m.count[c][t]=(m.count[c][t]||0)+1;m.total[c]++;m.vocab[t]=1})});
-    m.V=Object.keys(m.vocab).length;classes.forEach(function(c){m.prior[c]=Math.log(m.prior[c]/rows.length)});
-    return m;
+  /* ---------- 2. Texto -> variables: palabras, pares de palabras y fragmentos de 4 letras ---------- */
+  var STOP={de:1,en:1,el:1,la:1,los:1,las:1,del:1,con:1,y:1,se:1,lado:1,a:1,al:1,por:1,un:1,una:1,que:1,es:1,muy:1,the:1,of:1};
+  /* Palabras de acción: indican qué se hizo, no qué pieza falló, así que no entran al clasificador de componente */
+  var ACTION_WORD=/^(cambi|reemplaz|sustitu|instal|nuev|ajust|limpi|revis|calibr|lubric|apret|reapret|repar|alin|reset|reinici)|^(tenso|tensaron|puso)$/;
+  function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ ]/g,' ')}
+  function words(s){return norm(s).split(/\s+/).filter(function(w){return w&&!STOP[w]&&!ACTION_WORD.test(w)})}
+  function features(s){
+    var w=words(s), f=[];
+    w.forEach(function(x,i){
+      f.push('w:'+x);
+      if(i<w.length-1) f.push('b:'+x+'_'+w[i+1]);
+      if(x.length>=4){ var g='<'+x+'>'; for(var k=0;k<=g.length-4;k++) f.push('c:'+g.substr(k,4)); }
+    });
+    return f;
   }
-  function lp(m,c,t){return Math.log(((m.count[c][t]||0)+1)/(m.total[c]+m.V))}
-  function predict(m,text){
-    var tk=tokens(text), s={};
-    m.classes.forEach(function(c){var v=m.prior[c];tk.forEach(function(t){if(m.vocab[t])v+=lp(m,c,t)});s[c]=v});
-    var mx=Math.max.apply(null,m.classes.map(function(c){return s[c]})),sum=0,p={};
-    m.classes.forEach(function(c){p[c]=Math.exp(s[c]-mx);sum+=p[c]});m.classes.forEach(function(c){p[c]/=sum});
-    var best=m.classes.slice().sort(function(a,b){return p[b]-p[a]});
-    return {p:p,best:best,tk:tk};
-  }
-  var COMP=trainNB(TRAIN,function(r){return r.y},CLASSES);
-  var REPL=trainNB(TRAIN,function(r){return r.r?'yes':'no'},['yes','no']);
 
-  /* ---------- evaluación ---------- */
+  /* ---------- 3. Naive Bayes multinomial con suavizado de Laplace ---------- */
+  var ALPHA=0.5, M={count:{},total:{},prior:{},vocab:{}};
+  CLASSES.forEach(function(c){M.count[c]={};M.total[c]=0;M.prior[c]=0});
+  TRAIN.forEach(function(r){M.prior[r.y]++;features(r.text).forEach(function(f){M.count[r.y][f]=(M.count[r.y][f]||0)+1;M.total[r.y]++;M.vocab[f]=1})});
+  var V=Object.keys(M.vocab).length;
+  CLASSES.forEach(function(c){M.prior[c]=Math.log(M.prior[c]/TRAIN.length)});
+  function lp(c,f){return Math.log(((M.count[c][f]||0)+ALPHA)/(M.total[c]+ALPHA*V))}
+  function predict(text){
+    var fs=features(text).filter(function(f){return M.vocab[f]}), s={};
+    CLASSES.forEach(function(c){var v=M.prior[c];fs.forEach(function(f){v+=lp(c,f)});s[c]=v});
+    /* Temperatura: suaviza la confianza para que no salga 100% con cualquier nota */
+    var T=Math.max(1,fs.length/4), mx=-Infinity, p={}, sum=0;
+    CLASSES.forEach(function(c){if(s[c]>mx)mx=s[c]});
+    CLASSES.forEach(function(c){p[c]=Math.exp((s[c]-mx)/T);sum+=p[c]});
+    CLASSES.forEach(function(c){p[c]/=sum});
+    var best=CLASSES.slice().sort(function(a,b){return p[b]-p[a]});
+    var ws=words(text), known=ws.filter(function(w){return M.vocab['w:'+w]});
+    return {p:p,best:best,nf:fs.length,words:ws,known:known};
+  }
+  /* Palabras que nombran una pieza: sin ninguna, la nota es vaga ("ruido en la máquina") */
+  var PARTW={};CLASSES.forEach(function(c){PART[c].forEach(function(t){norm(t).split(' ').forEach(function(w){if(w.length>=4)PARTW[w]=1})})});
+  function confidence(out){
+    if(!out.nf) return 'none';
+    var top=out.p[out.best[0]];
+    if(!out.known.length) return top>=0.55?'approx':'none';
+    var hasPart=out.words.some(function(w){return PARTW[w]});
+    if(top>=0.7) return hasPart?'high':'vague';
+    return top>=0.5?'mid':'low';
+  }
+
+  /* ---------- 4. ¿Hubo reemplazo? Reglas transparentes sobre los verbos de la nota ---------- */
+  function action(text){
+    var t=' '+norm(text)+' ';
+    if(/ (no se (cambio|reemplazo|sustituyo)|sin (cambio|reemplazo)) /.test(t)) return 'fix';
+    if(/ (cambi\w*|reemplaz\w*|sustitu\w*|instal\w* (nuev\w*|otr\w*)|nuev[oa]s?|se puso otr\w*) /.test(t)) return 'repl';
+    if(/ (ajust\w*|limpi\w*|calibr\w*|lubric\w*|apret\w*|reapret\w*|revis\w*|repar\w*|tenso|tensaron|alin\w*|reset\w*|reinici\w*) /.test(t)) return 'fix';
+    return 'none';
+  }
+
+  /* ---------- 5. Evaluación en notas reservadas ---------- */
   var cm={};CLASSES.forEach(function(a){cm[a]={};CLASSES.forEach(function(b){cm[a][b]=0})});
-  TEST.forEach(function(r){cm[r.y][predict(COMP,r.text).best[0]]++});
+  TEST.forEach(function(r){cm[r.y][predict(r.text).best[0]]++});
   var P=0,Rc=0,F=0;
   CLASSES.forEach(function(c){var tp=cm[c][c],fp=0,fn=0;CLASSES.forEach(function(o){if(o!==c){fp+=cm[o][c];fn+=cm[c][o]}});
     var p=tp/(tp+fp||1),r=tp/(tp+fn||1);P+=p;Rc+=r;F+=(p+r?2*p*r/(p+r):0)});
@@ -220,65 +273,108 @@ footer{padding-block:32px;font:400 .78rem/1.5 var(--mono);color:var(--muted)}
   document.getElementById('m-p').textContent=pct(P);
   document.getElementById('m-r').textContent=pct(Rc);
   document.getElementById('m-f').textContent=pct(F);
-  var html='<thead><tr><th class="rowh">'+(EN?'real ↓ / pred →':'real ↓ / pred →')+'</th>'+CLASSES.map(function(c){return '<th scope="col">'+SHORT[c]+'</th>'}).join('')+'</tr></thead><tbody>';
+  var h='<thead><tr><th class="rowh">real ↓ / pred →</th>'+CLASSES.map(function(c){return '<th scope="col">'+SHORT[c]+'</th>'}).join('')+'</tr></thead><tbody>';
   CLASSES.forEach(function(a){var row=0;CLASSES.forEach(function(b){row+=cm[a][b]});
-    html+='<tr><th scope="row" class="rowh">'+SHORT[a]+'</th>'+CLASSES.map(function(b){var v=cm[a][b],a2=row?v/row:0;
-      return '<td class="'+(a===b?'diag':'')+'" style="background:color-mix(in srgb,var('+(a===b?'--amber':'--data')+') '+Math.round(a2*(a===b?55:80))+'%,transparent)">'+v+'</td>'}).join('')+'</tr>'});
-  document.getElementById('cm').innerHTML=html+'</tbody>';
+    h+='<tr><th scope="row" class="rowh">'+SHORT[a]+'</th>'+CLASSES.map(function(b){var v=cm[a][b],sh=row?v/row:0;
+      return '<td class="'+(a===b?'diag':'')+'" style="background:color-mix(in srgb,var('+(a===b?'--amber':'--data')+') '+Math.round(sh*(a===b?55:80))+'%,transparent)">'+v+'</td>'}).join('')+'</tr>'});
+  document.getElementById('cm').innerHTML=h+'</tbody>';
 
-  /* ---------- interfaz ---------- */
-  var EX = ['Fuga de aire en manguera del cilindro, se cambio conexion rapida','Pick and place no toma componente, se limpio boquilla','Sensor optico desalineado en conveyor, se ajusto','Breaker disparado en tablero, se reemplazo contactor','Banda patina en transportador linea 2, se cambio banda dentada'];
-  var chips=document.getElementById('chips');
+  /* ---------- 6. Pruebas difíciles escritas a mano ---------- */
+  var HARD=[
+    ['ruido fuerte en el termostato','thermal','none'],
+    ['se cambió balero del motor de la banda','bearing','repl'],
+    ['fuga de aire en el cilindro, se cambió el sello','pneumatic','repl'],
+    ['el horno de reflujo no calienta, se revisó la resistencia','thermal','fix'],
+    ['la pick and place tira componentes, se limpió la boquilla','nozzle','fix'],
+    ['la fotocelda no detecta la pieza en el conveyor, se limpió','sensor','fix'],
+    ['la pastilla se bota al arrancar, se cambió el contactor','electrical','repl'],
+    ['la banda patina, se tensó','belt','fix'],
+    ['termostao dañado en la zona 3','thermal','none'],
+    ['hola, buenos días','?','none']
+  ];
+  var ACT = EN ? {repl:'Replaced',fix:'Fix / adjust',none:'Not stated'} : {repl:'Reemplazo',fix:'Ajuste',none:'No se dice'};
+  var ok=0;
+  var hh='<thead><tr><th>'+(EN?'Note':'Nota')+'</th><th>'+(EN?'Expected':'Esperado')+'</th><th>'+(EN?'Model':'Modelo')+'</th><th>'+(EN?'Action':'Acción')+'</th><th></th></tr></thead><tbody>';
+  HARD.forEach(function(r){
+    var o=predict(r[0]), cf=confidence(o), got=cf==='none'?'?':o.best[0], a=action(r[0]);
+    var good=(got===r[1])&&(a===r[2]); if(good) ok++;
+    hh+='<tr><td class="n">'+esc(r[0])+'</td><td>'+(r[1]==='?'?(EN?'not recognized':'no reconoce'):SHORT[r[1]])+'</td><td>'+(got==='?'?(EN?'not recognized':'no reconoce'):SHORT[got])+'</td><td>'+ACT[a]+'</td><td class="'+(good?'y':'x')+'">'+(good?'✓':'✗')+'</td></tr>';
+  });
+  document.getElementById('hard').innerHTML=hh+'</tbody><caption style="caption-side:bottom;text-align:left;padding-top:8px" class="muted">'+ok+' / '+HARD.length+(EN?' correct':' correctas')+'</caption>';
+
+  /* ---------- 7. Interfaz ---------- */
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var EX=['ruido fuerte en el termostato','fuga de aire en manguera del cilindro, se cambió conexión rápida','pick and place no toma componente, se limpió boquilla','breaker disparado en tablero, se reemplazó contactor','banda patina en transportador línea 2','horno no calienta, se revisó resistencia'];
+  var note=document.getElementById('note'), chips=document.getElementById('chips');
   EX.forEach(function(e){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=e;b.addEventListener('click',function(){note.value=e;run()});chips.appendChild(b)});
-  var note=document.getElementById('note');
-  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var CONF = EN
+    ? {high:['High confidence','ok'],mid:['Medium confidence','amber'],low:['Low confidence: double-check','warn'],approx:['Approximate: unknown words, guessed from word fragments','amber'],vague:['Likely, but the note names no part: add it to be sure','amber'],none:['Not enough information','warn']}
+    : {high:['Confianza alta','ok'],mid:['Confianza media','amber'],low:['Confianza baja: revisar','warn'],approx:['Aproximado: palabras desconocidas, deducido por fragmentos','amber'],vague:['Probable, pero la nota no menciona la pieza: agrégala para confirmar','amber'],none:['No hay información suficiente','warn']};
+  var ACTL = EN
+    ? {repl:['Part replaced','ok'],fix:['Fix or adjustment (no replacement)','amber'],none:['The note does not say what was done','']}
+    : {repl:['Hubo reemplazo','ok'],fix:['Ajuste, limpieza o reparación (sin reemplazo)','amber'],none:['La nota no dice qué se hizo','']};
+  function setPill(id,pair){var el=document.getElementById(id);el.textContent=pair[0];el.className='pill'+(pair[1]?' '+pair[1]:'')}
   function run(){
-    var text=note.value.trim(); if(!text){return}
-    var out=predict(COMP,text), c1=out.best[0], c2=out.best[1];
-    document.getElementById('pred').textContent=NAMES[c1];
-    var rp=predict(REPL,text), yes=rp.best[0]==='yes';
-    var pill=document.getElementById('repl'); pill.className='pill'+(yes?' yes':'');
-    pill.textContent=yes?(EN?'Part replaced':'Hubo reemplazo'):(EN?'No replacement (fix / adjust)':'Sin reemplazo (ajuste o limpieza)');
-    document.getElementById('probs').innerHTML=out.best.slice(0,4).map(function(c,i){
-      return '<div class="prob'+(i?'':' top')+'"><span>'+NAMES[c]+'</span><div class="bar"><span style="width:'+(out.p[c]*100).toFixed(1)+'%"></span></div><span class="v">'+pct(out.p[c])+'</span></div>'}).join('');
-    var words=norm(text).split(/\s+/).filter(Boolean), orig=text.split(/\s+/);
-    var scored=words.map(function(w,i){var s=COMP.vocab[w]?lp(COMP,c1,w)-lp(COMP,c2,w):0;return {w:orig[i]||w,s:s}});
-    var top=scored.slice().sort(function(a,b){return Math.abs(b.s)-Math.abs(a.s)}).slice(0,4).filter(function(x){return Math.abs(x.s)>0.4}).map(function(x){return x.w});
-    document.getElementById('why').innerHTML=scored.map(function(x){var k=top.indexOf(x.w)>=0;return k?'<mark class="'+(x.s<0?'neg':'')+'" title="'+x.s.toFixed(2)+'">'+esc(x.w)+'</mark>':esc(x.w)}).join(' ')+
-      '<br><span class="muted" style="font-size:.82rem">'+(EN?'Highlighted words pushed the model toward “':'Las palabras resaltadas inclinaron el modelo hacia “')+NAMES[c1]+(EN?'” instead of “':'” en lugar de “')+NAMES[c2]+'”.</span>';
+    var text=note.value.trim(); if(!text) return;
+    var o=predict(text), cf=confidence(o), c1=o.best[0], c2=o.best[1];
+    document.getElementById('pred').textContent = cf==='none' ? (EN?'Not recognized':'No reconocido') : NAMES[c1];
+    setPill('conf',CONF[cf]); setPill('act',ACTL[action(text)]);
+    document.getElementById('probs').innerHTML = cf==='none' ? '' : o.best.slice(0,4).map(function(c,i){
+      return '<div class="prob'+(i?'':' top')+'"><span>'+NAMES[c]+'</span><div class="bar"><span style="width:'+(o.p[c]*100).toFixed(1)+'%"></span></div><span class="v">'+pct(o.p[c])+'</span></div>'}).join('');
+    /* Explicación palabra por palabra */
+    var raw=text.split(/\s+/), unknown=[];
+    var html=raw.map(function(tok){
+      var w=norm(tok).trim(); if(!w) return esc(tok);
+      if(ACTION_WORD.test(w)) return '<mark class="act" title="'+(EN?'action word':'palabra de acción')+'">'+esc(tok)+'</mark>';
+      if(STOP[w]) return esc(tok);
+      if(!M.vocab['w:'+w]){unknown.push(tok);return '<span class="unk" title="'+(EN?'unknown word':'palabra desconocida')+'">'+esc(tok)+'</span>'}
+      var d=lp(c1,'w:'+w)-lp(c2,'w:'+w);
+      return d>0.5?'<mark title="'+(EN?'points to ':'apunta a ')+NAMES[c1]+'">'+esc(tok)+'</mark>':esc(tok);
+    }).join(' ');
+    var expl = cf==='none'
+      ? (EN?'No words related to any component were found. Mention the part or the symptom.':'No encontré palabras relacionadas con ningún componente. Menciona la pieza o el síntoma.')
+      : (EN?'Highlighted words pointed to “':'Las palabras resaltadas en ámbar apuntaron a “')+NAMES[c1]+'”'+(EN?' over “':' por encima de “')+NAMES[c2]+'”.';
+    if(unknown.length) expl+=(EN?' Words the model never saw (dotted): ':' Palabras que el modelo nunca vio (punteadas): ')+unknown.map(esc).join(', ')+'.';
+    document.getElementById('why').innerHTML=html+'<br><span class="muted" style="font-size:.82rem">'+expl+'</span>';
   }
   document.getElementById('go').addEventListener('click',run);
   note.addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))run()});
 
   var HOW = EN ? [
-    'Generate 1,200 synthetic notes from plant-floor templates with a fixed seed: 6 components, 60% of notes mention a symptom from another class and 35% never name the part.',
-    'Normalize text: lowercase, strip accents and punctuation, drop stopwords.',
-    'Build features from single words and word pairs (bag of words with bigrams).',
-    'Train two multinomial Naive Bayes models with Laplace smoothing: component and replacement yes/no.',
-    'Evaluate on a 20% hold-out with macro precision, recall and F1, plus the confusion matrix.'
+    'Generate 1,400 synthetic notes from plant-floor templates with a fixed seed: 7 components; 35% of notes mention a symptom from another class, 25% never name the part and 10% do not say what was done.',
+    'Normalize the text (lowercase, no accents or punctuation) and drop stopwords and action verbs, which describe what was done, not what failed.',
+    'Build features from words, word pairs and 4-letter fragments. The fragments let the model handle words it never saw or typos: “termostao” still looks like “termostato”.',
+    'Train a multinomial Naive Bayes with Laplace smoothing and soften its probabilities so confidence is not always 100%.',
+    'If the note has no known words or confidence is low, the demo says so instead of guessing.',
+    'Detect replacement with transparent rules on the verbs (changed, replaced, installed new… vs. adjusted, cleaned, checked…), including negations such as “no se cambió”.',
+    'Evaluate on a 20% hold-out with macro precision, recall and F1, plus hand-written hard cases that run live.'
   ] : [
-    'Genero 1,200 notas sintéticas con plantillas de planta y semilla fija: 6 componentes, 60% de las notas mencionan un síntoma de otra clase y 35% no nombran la pieza.',
-    'Normalizo el texto: minúsculas, sin acentos ni signos, sin palabras vacías.',
-    'Construyo variables con palabras y pares de palabras (bolsa de palabras con bigramas).',
-    'Entreno dos Naive Bayes multinomiales con suavizado de Laplace: componente y reemplazo sí/no.',
-    'Evalúo con 20% de notas reservadas: precisión, recall y F1 macro, más la matriz de confusión.'
+    'Genero 1,400 notas sintéticas con plantillas de planta y semilla fija: 7 componentes; el 35% de las notas menciona un síntoma de otra clase, el 25% no nombra la pieza y el 10% no dice qué se hizo.',
+    'Normalizo el texto (minúsculas, sin acentos ni signos) y quito palabras vacías y verbos de acción, porque dicen qué se hizo y no qué falló.',
+    'Construyo variables con palabras, pares de palabras y fragmentos de 4 letras. Los fragmentos permiten entender palabras que nunca vio o con errores: “termostao” se sigue pareciendo a “termostato”.',
+    'Entreno un Naive Bayes multinomial con suavizado de Laplace y suavizo sus probabilidades para que la confianza no salga siempre en 100%.',
+    'Si la nota no tiene palabras conocidas o la confianza es baja, la demo lo dice en vez de adivinar.',
+    'Detecto el reemplazo con reglas transparentes sobre los verbos (se cambió, se reemplazó, se instaló nuevo… contra se ajustó, se limpió, se revisó…), incluyendo negaciones como “no se cambió”.',
+    'Evalúo con 20% de notas reservadas (precisión, recall y F1 macro) y con pruebas difíciles escritas a mano que corren en vivo.'
   ];
-  document.getElementById('how').innerHTML=HOW.map(function(h){return '<li><span>'+h+'</span></li>'}).join('');
+  document.getElementById('how').innerHTML=HOW.map(function(x){return '<li><span>'+x+'</span></li>'}).join('');
 
   if(EN){
     document.documentElement.lang='en';
     document.title='Failure classifier · Demo · Luis Manuel Macías Patiño';
     var T={'t-badge':'Synthetic data · demo','t-title':'Failure classifier',
-      't-intro':'Type a maintenance note the way a technician would write it, and the model predicts which component failed and whether a part was replaced. It is a small version of the real classifier, trained right here in your browser. Notes are in Spanish, as they are written on the plant floor; try the examples.',
+      't-intro':'Type a maintenance note the way a technician would write it. The model predicts which component failed, tells you how confident it is and detects whether a part was replaced. It is a small version of the real classifier, trained right here in your browser. Notes are in Spanish, as they are written on the plant floor; try the examples.',
       't-honest':'Training notes are synthetic: I generated them from templates using typical plant vocabulary. The real model was trained on 51,525 private company records, which are not published.',
-      't-try':'Try it','t-label':'Maintenance note','t-pred':'Component','t-why':'Words that weighed the most','t-eval':'Evaluation',
+      't-try':'Try it','t-label':'Maintenance note','t-pred':'Component','t-why':'How it read your note','t-eval':'Evaluation',
       't-evalp':'Measured on notes the model did not see during training (20% of the set).','t-p':'Precision','t-cm':'Confusion matrix · actual vs. predicted',
+      't-hard':'Hard cases','t-hardp':'Hand-written notes that do not come from the templates. They are evaluated live every time you open the page.',
       't-how':'How it works','t-foot':'Built by Luis Manuel Macías Patiño · multinomial Naive Bayes written from scratch in JavaScript, no libraries.'};
     Object.keys(T).forEach(function(id){document.getElementById(id).textContent=T[id]});
     document.getElementById('go').textContent='Classify';
     var back=document.getElementById('back');back.href='../en/';back.textContent='← Portfolio';
     var lang=document.getElementById('lang');lang.href='./';lang.textContent='Español';lang.hreflang='es';
   }
+  window.__demo={predict:predict,confidence:confidence,action:action};
   run();
 })();
 </script>
